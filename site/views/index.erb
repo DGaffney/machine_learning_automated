@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about">About</a>
+      </li>
+      <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                My Account
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/datasets">My Datasets</a>
+                <a class="dropdown-item" href="/edit_account">Edit</a>
+                <a class="dropdown-item" href="/logout">Logout</a>
+              </div>
+            </li>
+    </ul>
+  </div>
+</nav>
+<div class="jumbotron">
+  <h1 class="display-3">Machine Learning Automator</h1>
+  <p class="lead">Get started with machine learning in your application by having us do the heavy lifting for you.</p>
+  <hr class="my-4">
+  <form action="/preview" method="POST" enctype="multipart/form-data">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="input-group">
+          <input type="file" name="file" class="file">
+          <span class="input-group-addon"><i class="fa fa-database" aria-hidden="true"></i></span>
+          <input type="text" class="form-control input-lg" disabled="" placeholder="Select Dataset">
+          <span class="input-group-btn">
+            <button class="browse btn btn-primary input-lg" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
+          </span>
+        </div>
+      </div>
+      <div class="offset-sm-2 col-sm-4">
+        <button type="submit" class="btn btn-primary">Upload CSV</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  $(document).on('click', '.browse', function(){
+    var file = $(this).parent().parent().find('.file');
+    console.log($(this).parent().parent().children())
+    file.trigger('click');
+  });
+  $(document).on('change', '.file', function(){
+    $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
+  });
+</script>
