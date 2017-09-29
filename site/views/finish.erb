@@ -1,0 +1,8 @@
+<%= @dataset.dataset_description %>
+<p>Once complete, you can use the following Ruby code to use the API:</p>
+<pre><code class="ruby">
+  client = DGaffML::client.new("<%= current_user_id.to_s %>")
+  dataset_id = "<%= @dataset.id%>"
+  client.get_results(dataset_id)
+  client.predict([[]])
+</code></pre>
