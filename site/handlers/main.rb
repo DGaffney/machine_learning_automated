@@ -6,32 +6,50 @@ def current_user_id
   BSON::ObjectId(session[:current_user_id].to_s)
 end
 
+get "/datasets/:user_id/:dataset_id" do
+  redirect "/" if current_user.nil?
+  if params[:user_id] == current_user_id.to_s || current_user.email == "itsme@devingaffney.com"
+    @dataset = Dataset.find(params[:dataset_id])
+    erb :"finish"
+  else
+    flash[:error] = "You must be logged in as a different user to see this page"
+    redirect "/"
+  end
+end
+
 get "/" do
   erb :"index"
 end
 
 post "/preview" do
   redirect "/" if current_user.nil?
-  user_id = current_user_id
   csv = CSV.parse(params["file"][:tempfile].read) rescue nil
+  params["file"][:filename] = params["file"][:filename].gsub(" ", "_")
   if csv.nil?
     flash[:error] = "CSV could not be read. Try again please!"
     redirect "/profile"
   else
-    @csv = CSVValidator.new(csv, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
+    @csv = CSVValidator.new(csv.shuffle.first(1000), params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
     results = @csv.validate
     if results.class == String
       flash[:error] = results
       redirect "/profile"
     else
-      @d = Dataset.add_new_validated_csv(@csv, user_id)
+      @csv.csv_data = csv
+      @d = Dataset.add_new_validated_csv(@csv, current_user_id)
+      prediction_example = []
+      @csv.csv_data.shuffle.first.each_with_index do |el, i|
+        prediction_example << el if i != @d.prediction_column
+      end
+      @d.csv_preview_row = prediction_example
+      @d.save!
       @csv_data = @d.csv_data
       erb :"preview"
     end
   end
 end
 
-post "/finish" do
+post "/datasets/:user_id/:dataset_id" do
   redirect "/" if current_user.nil?
   @dataset = Dataset.find(params["dataset_id"])
   params.select{|k,v| k.include?("header_class_")}.collect{|k,v| [k.gsub("header_class_", "").to_i, v]}.each do |row_num, classtype|
@@ -41,6 +59,7 @@ post "/finish" do
   @dataset.prediction_speed = params["prediction_speed"]
   @dataset.prediction_column = params["prediction_column"]
   @dataset.save!
+  @dataset.set_update({"status" => "queued"})
   AnalyzeDataset.perform_async(@dataset.id)
   erb :"finish"
 end

@@ -36,4 +36,12 @@ class User
       return {success: false, user: nil}
     end
   end
+  
+  def file_usage
+    (Dataset.where(user_id: self.id).fields(:filesize_mb).collect(&:filesize_mb).sum.round(2)/200.0)**100
+  end
+
+  def over_limit
+    file_usage/200.0 > 1 ? true : false
+  end
 end

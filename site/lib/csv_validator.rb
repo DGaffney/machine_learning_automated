@@ -42,7 +42,7 @@ class CSVValidator
     derived_classes = []
     classes.collect(&:uniq).each_with_index do |class_set, i|
       if class_set.include?(String)
-        if (Math.log(self.csv_data[i].length, 10) - Math.log(self.csv_data[i].uniq.length, 10)) > 2
+        if (Math.log(self.csv_data[i].length, 10) - Math.log(self.csv_data[i].uniq.length, 10)) > 2 || self.csv_data[i].uniq.length < 15
           derived_classes << "Categorical"
         else
           if self.csv_data.collect{|x| x.split(" ").length}.median > 2

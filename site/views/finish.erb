@@ -1,8 +1,133 @@
-<%= @dataset.dataset_description %>
-<p>Once complete, you can use the following Ruby code to use the API:</p>
-<pre><code class="ruby">
-  client = DGaffML::client.new("<%= current_user_id.to_s %>")
-  dataset_id = "<%= @dataset.id%>"
-  client.get_results(dataset_id)
-  client.predict([[]])
-</code></pre>
+<h1><%= @dataset.filename %></h1>
+<% if @dataset.get_current_status != "Complete"%>
+<div class="row">
+  <div class="col-sm-12">
+    <%= @dataset.dataset_description %> Below is some information about the models' current progress.
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="<%= @dataset.percent_complete %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= @dataset.percent_complete %>%"></div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <p>Latest Updates From the model:</p>
+    <ul>
+      <% if @dataset.latest_update["status"] == "queued" %>
+      <li>Job is queued</li>
+      <% elsif @dataset.latest_update["status"] == "loading_dataset" %>
+      <li>Job Processing</li>
+      <li>Loading Dataset</li>
+      <% elsif @dataset.latest_update["status"] == "dataset_read" %>
+      <li>Job Processing</li>
+      <li>Dataset Read</li>
+      <li>Starting Algorithm Analysis</li>
+      <% elsif @dataset.latest_update["status"] == "running_models" %>
+      <li>Job Processing</li>
+      <li>Dataset Read</li>
+      <li>Comparing Models</li>
+      <li>Current Model Running: <%= @dataset.latest_update["model_running"].split("(").first %></li>
+      <li>Current Best Model: <%= @dataset.latest_update["best_model"][0].split("(").first %></li>
+      <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
+      <li>Current Model Accuracy: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+      <% else %>
+      <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+      <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <h5>API Access</h5>
+    <pre><code class="ruby">
+      require 'dgaff_ml' #gem install "dgaff_ml" in order to use
+      client = DGaffML::client.new("<%= current_user_id.to_s %>")
+      dataset_id = "<%= @dataset.id%>"
+      predictor = client.models(dataset_id)
+      predictor.predict([<%= @dataset.csv_preview_row.inspect %>])
+    </code></pre>
+  </div>
+</div>
+<% else %>
+<div class="row">
+  <div class="col-sm-12">
+    <h4>Model Results</h4>
+      <h5>TL;DR</h5>
+    <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
+      <p>Model presumes that predicted columns are binary (i.e. "Yes" or "No", "True" or "False") or categorical (i.e. "Spanish" or "English" or "French", "Bike" or "Car" or "Boat"). The trained model <%= @dataset.binary_measurement_human_language %>, performs at <%= @dataset.results["diagnostic_results"]["accuracy"].round(4)*100 %>% accuracy, and uses the <%= @dataset.results["model_name"] %> model, which you can read more about <a href="<%= @dataset.model_wiki_link[@dataset.results["model_name"]] %>">here</a>.</p>
+    <% else %>
+      <p>Model presumes that predicted columns are continuous (i.e. the height of a person in inches or the amount of money spent). The trained model <%= @dataset.continuous_measurement_human_language %>, and uses the <%= @dataset.results["model_name"] %> model, which you can read more about <a href="<%= @dataset.model_wiki_link[@dataset.results["model_name"]] %>">here</a>. On average, ≈65% of our predicted values will be within <%= @dataset.results["diagnostic_results"]["rmse"].to_f.round(2) %> of the actual value, and ≈95% fall within <%= @dataset.results["diagnostic_results"]["rmse"].to_f.round(2)*2 %> of the value.</p>
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <h5>API Access</h5>
+    <pre><code class="ruby">
+      require 'dgaff_ml' #gem install "dgaff_ml" in order to use
+      client = DGaffML::client.new("<%= current_user_id.to_s %>")
+      dataset_id = "<%= @dataset.id%>"
+      predictor = client.models(dataset_id)
+      predictor.predict([<%= @dataset.csv_preview_row.inspect %>])
+    </code></pre>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <h5>Plots</h5>
+    <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
+    <div class="row">
+      <!--TODO Figure out why AUC plots don't work in multiclass settings in yellowbrick <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/roc_auc.png" data-toggle="tooltip" title="ROC/AUC curves show the degree to which the model outperforms chance - a good model trends towards the upper left corner"><img src="/images/<%= @dataset.id %>/roc_auc.png" class="img-fluid" alt="ROC/AUC curves show the degree to which the model outperforms chance - a good model trends towards the upper left corner"></a>
+      </div> -->
+      <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/classification_report.png" data-toggle="tooltip" title="This plot shows Precision/Recall/F1 Scores per category, and are useful for judging the accuracy of the model under certain constraints"><img src="/images/<%= @dataset.id %>/classification_report.png" class="img-fluid" alt="This plot shows Precision/Recall/F1 Scores per category, and are useful for judging the accuracy of the model under certain constraints"></a>
+      </div>
+      <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/confusion_matrix.png" data-toggle="tooltip" title="This plot shows the various success/failure cases per classification pairing."><img src="/images/<%= @dataset.id %>/confusion_matrix.png" class="img-fluid" alt="This plot shows the various success/failure cases per classification pairing."></a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/class_balance.png" data-toggle="tooltip" title="This shows the number of cases per label"><img src="/images/<%= @dataset.id %>/class_balance.png" class="img-fluid" alt="This shows the number of cases per label"></a>
+      </div>
+      <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/pca_2.png" data-toggle="tooltip" title="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."><img src="/images/<%= @dataset.id %>/pca_2.png" class="img-fluid" alt="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."></a>
+      </div>
+      <div class="col-sm-4">
+        <a href="/images/<%= @dataset.id %>/pca_3.png" data-toggle="tooltip" title="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."><img src="/images/<%= @dataset.id %>/pca_3.png" class="img-fluid" alt="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."></a>
+      </div>
+    </div>
+    <% else %>
+    <div class="row">
+      <div class="col-sm-6">
+        <a href="/images/<%= @dataset.id %>/residuals_plot.png" data-toggle="tooltip" title="Residuals plots show the way in which deviance from the actual value of a row relates to the value given and are helpful for finding predictions under which the model may degenerate"><img src="/images/<%= @dataset.id %>/residuals_plot.png" class="img-fluid" alt="Residuals plots show the way in which deviance from the actual value of a row relates to the value given and are helpful for finding predictions under which the model may degenerate"></a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/images/<%= @dataset.id %>/prediction_error.png" data-toggle="tooltip" title="Error plots show the way in which the actual value of a row relates to the predicted value and are helpful for finding predictions under which the model may degenerate"><img src="/images/<%= @dataset.id %>/prediction_error.png" class="img-fluid" alt="Error plots show the way in which the actual value of a row relates to the predicted value and are helpful for finding predictions under which the model may degenerate"></a>
+      </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <a href="/images/<%= @dataset.id %>/pca_2.png" data-toggle="tooltip" title="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."><img src="/images/<%= @dataset.id %>/pca_2.png" class="img-fluid" alt="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."></a>
+      </div>
+      <div class="col-sm-6">
+        <a href="/images/<%= @dataset.id %>/pca_3.png" data-toggle="tooltip" title="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."><img src="/images/<%= @dataset.id %>/pca_3.png" class="img-fluid" alt="PCA Plots show the degree to which the variables interrelate - with highly distinct variables lead to more scattered plots."></a>
+      </div>
+    </div>
+    <% end %>
+  </div>
+</div>
+
+<% end %>
+
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+  
+

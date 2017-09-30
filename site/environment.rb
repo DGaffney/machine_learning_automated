@@ -11,6 +11,7 @@ require 'dgaff'
 require 'bcrypt'
 require 'postmark'
 require 'open3'
+require 'time_difference'
 SETTINGS = YAML.load(File.read("settings.json")) rescue {"download_path" => "#{`pwd`.strip}/../data"}
 `mkdir -p #{SETTINGS["storage_location"]}/csv_data`
 `mkdir -p #{SETTINGS["storage_location"]}/ml_models`
@@ -19,7 +20,7 @@ SETTINGS = YAML.load(File.read("settings.json")) rescue {"download_path" => "#{`
 MongoMapper.connection = Mongo::MongoClient.new("localhost", 27017, :pool_size => 25, :op_timeout => 600000, :timeout => 600000, :pool_timeout => 600000)
 #MongoMapper.connection["admin"].authenticate(SETTINGS["db_user"], SETTINGS["db_password"])
 MongoMapper.database = "ml_automator"
-
+$redis = Redis.new
 Dir[File.dirname(__FILE__) + '/extensions/*.rb'].each {|file| require file }
 Dir[File.dirname(__FILE__) + '/models/*.rb'].each {|file| require file }
 Dir[File.dirname(__FILE__) + '/helpers/*.rb'].each {|file| require file }

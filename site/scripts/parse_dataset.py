@@ -11,7 +11,7 @@ import json
 def label_type(y, y_type):
     if len(set(y)) == 2 and y_type in ["Categorical", "Float", "Integer"]:
         return "Binary"
-    elif len(set(y)) >= 2 and y_type == "Categorical":
+    elif len(set(y)) <= 15 and y_type in ["Categorical", "Integer", "Phrase"]:
         return "Categorical"
     else:
         return "Ordinal"

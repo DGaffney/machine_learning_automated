@@ -14,21 +14,32 @@ class AnalyzeDataset
     manifest_file = File.open(filename.gsub(".csv", "")+"_manifest.json", "w")
     manifest_file.write(@dataset.to_json)
     manifest_file.close
-    script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_main"
+    script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_fast"
     current_statement = {}
-    run_python_file("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |line|
-      current_statement = JSON.parse(line.strip) rescue nil
-      if !current_statement.nil?
-        @dataset.reload
-        @dataset.latest_update = current_statement if current_statement["status"] != "complete"
-        @dataset.save!
+    statements = []
+    binding.pry
+    IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
+      io.each_line do |line|
+        puts line
+        current_statement = JSON.parse(line.strip) rescue nil
+        if !current_statement.nil?
+          statements << current_statement
+          puts statements.length
+          @dataset.reload
+          #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
+          @dataset.save!
+        end
       end
     end
-    binding.pry
-    @dataset.write_final_result(current_statement)
-    @dataset.last_analyzed_at = Time.now
-    @dataset.current_status = "complete"
-    @dataset.save!
+    if current_statement.nil?
+      AnalyzeDataset.perform_async(dataset_id)
+    else
+      @dataset.clear_updater
+      @dataset.write_final_result(current_statement)
+      @dataset.last_analyzed_at = Time.now
+      @dataset.current_status = "complete"
+      @dataset.save!
+    end
   end
   
   def run_python_file(command)

@@ -1,5 +1,5 @@
 <% additional_row_count = @csv.csv_data.length-6 %>
-<form action="/finish" method="POST">
+<form action="/datasets/<%= current_user_id %>/<%= @d.id %>" method="POST">
   <div class="row">
     <h1>Previewing <%= @csv.filename %></h1>
     <p>Here's a quick preview of the dataset you're proposing to analyze. Take a moment to review the data types we've found, and edit as necessary, then finally choose a column that you're trying to predict.</p>
@@ -78,7 +78,6 @@
         <% end %>
       </select>
     </div>
-    <input type="hidden" name="dataset_id" value="<%= @d.id %>">
     <div class="offset-sm-2 col-sm-4">
       <h5>Ready to learn?</h5>
       <button type="submit" class="btn btn-primary">Submit</button>
