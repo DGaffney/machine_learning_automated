@@ -20,7 +20,7 @@ class Dataset
   def wind_down(mail=false)
     if mail
       Mailer.send(
-        params[:email], 
+        User.find(self.user_id).email, 
         "Dataset #{self.filename} failed", 
         "Hey,<br/>
         Unfortunately, the dataset that you submitted didn't pass muster for the machine learners.
