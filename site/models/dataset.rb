@@ -28,10 +28,10 @@ class Dataset
         or has missing data in the CSV. Please double check the data for these erorrs and resubmit when you think you've cleaned it up.
         ")
     end
-    puts "rm -f #{SETTINGS["storage_location"]+"/csv_data/"+self.id.to_s+".gzip"}"
-    puts "rm -f #{SETTINGS["storage_location"]+"/conversion_pipelines/"+self.id.to_s+".gzip"}"
-    puts "rm -f #{SETTINGS["storage_location"]+"/ml_models/"+self.id.to_s+".pkl"}"
-    puts "rm -rf #{SETTINGS["storage_location"]+"/public/images/"+self.id.to_s}"
+    puts "rm -f #{SETTINGS["storage_location"]+"csv_data/"+self.id.to_s+".gzip"}"
+    puts "rm -f #{SETTINGS["storage_location"]+"conversion_pipelines/"+self.id.to_s+".gzip"}"
+    puts "rm -f #{SETTINGS["storage_location"]+"ml_models/"+self.id.to_s+".pkl"}"
+    puts "rm -rf #{SETTINGS["storage_location"]+"public/images/"+self.id.to_s}"
     self.destroy
   end
 
