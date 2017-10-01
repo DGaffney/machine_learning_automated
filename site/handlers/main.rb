@@ -164,7 +164,7 @@ get "/api/:user_id/dataset/:dataset_id" do
   @user = User.find(params[:user_id])
   return {error: "Account not found"}.to_json if @user.nil?
   @dataset = Dataset.find(params[:dataset_id])
-  return JSON.parse(@dataset.to_json).merge(conversion_pipeline: @dataset.conversion_pipeline)
+  return JSON.parse(@dataset.to_json).merge(conversion_pipeline: @dataset.conversion_pipeline).to_json
 end
 
 post "/api/:user_id/predict" do
