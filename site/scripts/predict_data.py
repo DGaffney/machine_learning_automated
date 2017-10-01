@@ -1,6 +1,7 @@
 import sys
 import pickle
 import json
+import parse_dataset
 from sklearn.externals import joblib
 storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_id = sys.argv[1]
