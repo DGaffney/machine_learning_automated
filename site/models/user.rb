@@ -44,4 +44,12 @@ class User
   def over_limit
     file_usage/200.0 > 1 ? true : false
   end
+  
+  def api_response
+    user = JSON.parse(self.to_json)
+    user.delete("password_hash")
+    user["file_usage"] = self.file_usage
+    user["dataset_count"] = Dataset.where(user_id: self.user_id).count
+    user
+  end
 end
