@@ -12,6 +12,7 @@ require 'bcrypt'
 require 'postmark'
 require 'open3'
 require 'time_difference'
+require 'chronic'
 SETTINGS = YAML.load(File.read("settings.json")) rescue {"download_path" => "#{`pwd`.strip}/../data"}
 `mkdir -p #{SETTINGS["storage_location"]}/csv_data`
 `mkdir -p #{SETTINGS["storage_location"]}/ml_models`

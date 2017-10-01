@@ -77,7 +77,7 @@ class CSVValidator
     elsif (num = Integer(str) rescue Float(str) rescue nil)
       num
     else 
-      tm = Time.parse(str) rescue nil
+      tm = Chronic.parse(str) rescue nil
       return tm if !tm.nil?
       # Time.parse does not raise an error for invalid input
       str
