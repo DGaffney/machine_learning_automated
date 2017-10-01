@@ -57,9 +57,9 @@
           </tr>
         </thead>
         <tbody>
-          <% @datasets.each do |dataset| %>
+          <% @datasets.each_with_index do |dataset, i| %>
             <tr>
-              <th scope="row">1</th>
+              <th scope="row"><%= i+1 %></th>
               <td><a href="/datasets/<%= current_user_id %>/<%= dataset.id %>"><%= dataset.filename %></a></td>
               <td><%= dataset.filesize_mb.round(2) %> MB</td>
               <td><%= dataset.row_count %></td>

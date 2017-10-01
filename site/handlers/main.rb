@@ -146,7 +146,7 @@ end
 
 get "/profile" do
   redirect "/" if current_user.nil?
-  @datasets = Dataset.where(user_id: current_user_id)
+  @datasets = Dataset.where(user_id: current_user_id).order(:created_at.desc)
   erb :"profile"
 end
 
