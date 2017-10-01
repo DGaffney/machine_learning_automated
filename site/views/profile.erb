@@ -49,7 +49,7 @@
           <tr>
             <th>#</th>
             <th>Filename</th>
-            <th>Filesize (<%= current_user.file_usage %>% used)</th>
+            <th><a href="#" data-toggle="tooltip" title="Users are allotted a total of 200mb of compressed data on the server.">Filesize (<%= current_user.file_usage %>% used)</a></th>
             <th>Row Count</th>
             <th>Feature Count</th>
             <th>Status</th>
@@ -74,3 +74,10 @@
     <% end %>
   </div>
 </div>
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+  
+

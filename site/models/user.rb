@@ -38,7 +38,7 @@ class User
   end
   
   def file_usage
-    (Dataset.where(user_id: self.id).fields(:filesize_mb).collect(&:filesize_mb).sum.round(2)/200.0).round(4)**100
+    ((Dataset.where(user_id: self.id).fields(:filesize_mb).collect(&:filesize_mb).sum.round(2)/200.0).round(4)**100).round(2)
   end
 
   def over_limit
