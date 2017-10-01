@@ -16,6 +16,10 @@ class Dataset
   key :feature_count, Integer
   key :csv_preview_row, Array
   timestamps!
+  def tipped_over?
+    self.results && self.results.empty? && self.current_status == "complete"
+  end
+
   def continuous_measurement_human_language
     if self.results["diagnostic_results"]["r2"] > 0.8
       return "is extremely accurate"
