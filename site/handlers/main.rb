@@ -37,12 +37,6 @@ post "/preview" do
     else
       @csv.csv_data = csv
       @d = Dataset.add_new_validated_csv(@csv, current_user_id)
-      prediction_example = []
-      @csv.csv_data.shuffle.first.each_with_index do |el, i|
-        prediction_example << el if i != @d.prediction_column
-      end
-      @d.csv_preview_row = prediction_example
-      @d.save!
       @csv_data = @d.csv_data
       erb :"preview"
     end
@@ -58,6 +52,12 @@ post "/datasets/:user_id/:dataset_id" do
   @dataset.prediction_accuracy = params["prediction_accuracy"]
   @dataset.prediction_speed = params["prediction_speed"]
   @dataset.prediction_column = params["prediction_column"]
+  prediction_example = []
+  @dataset.csv_data.shuffle.first.each_with_index do |el, i|
+    prediction_example << el if i != @d.prediction_column
+  end
+  @d.csv_preview_row = prediction_example
+  @d.save!
   @dataset.save!
   @dataset.set_update({"status" => "queued"})
   AnalyzeDataset.perform_async(@dataset.id)
