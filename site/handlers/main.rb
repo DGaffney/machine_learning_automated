@@ -168,7 +168,6 @@ get "/api/:user_id/dataset/:dataset_id" do
 end
 
 post "/api/:user_id/predict/:dataset_id" do
-  binding.pry
   @user = User.find(params[:user_id])
   return {error: "Account not found"}.to_json if @user.nil?
   @dataset = Dataset.find(params[:dataset_id])

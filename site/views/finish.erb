@@ -45,9 +45,9 @@
     <h5>API Access</h5>
     <pre><code class="ruby">
       require 'dgaff_ml' #gem install "dgaff_ml" in order to use
-      client = DGaffML::client.new("<%= current_user_id.to_s %>")
+      client = DGaffML::Client.new("<%= current_user_id.to_s %>")
       dataset_id = "<%= @dataset.id%>"
-      predictor = client.models(dataset_id)
+      predictor = client.model(dataset_id)
       predictor.predict([<%= @dataset.csv_preview_row.inspect %>])
     </code></pre>
   </div>
