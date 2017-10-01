@@ -49,7 +49,7 @@ class User
     user = JSON.parse(self.to_json)
     user.delete("password_hash")
     user["file_usage"] = self.file_usage
-    user["dataset_count"] = Dataset.where(user_id: self.user_id).count
+    user["dataset_count"] = Dataset.where(user_id: self.id).count
     user
   end
 end
