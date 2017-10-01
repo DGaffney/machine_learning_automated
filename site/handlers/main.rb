@@ -54,7 +54,7 @@ post "/datasets/:user_id/:dataset_id" do
   @dataset.prediction_column = params["prediction_column"]
   prediction_example = []
   @dataset.csv_data.shuffle.first.each_with_index do |el, i|
-    prediction_example << el if i != @d.prediction_column
+    prediction_example << el if i != @dataset.prediction_column
   end
   @d.csv_preview_row = prediction_example
   @d.save!
