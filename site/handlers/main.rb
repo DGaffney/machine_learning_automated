@@ -56,8 +56,8 @@ post "/datasets/:user_id/:dataset_id" do
   @dataset.csv_data.shuffle.first.each_with_index do |el, i|
     prediction_example << el if i != @dataset.prediction_column
   end
-  @d.csv_preview_row = prediction_example
-  @d.save!
+  @dataset.csv_preview_row = prediction_example
+  @dataset.save!
   @dataset.save!
   @dataset.set_update({"status" => "queued"})
   AnalyzeDataset.perform_async(@dataset.id)
