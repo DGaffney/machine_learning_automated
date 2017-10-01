@@ -95,7 +95,7 @@ def parse(data_filename, manifest_filename):
     return convert_text_fields_to_data(cast_csv_given_manifest(rows, manifest), manifest), manifest
 
 def convert_text_fields_to_data(casted_dataset, manifest):
-    transposed = np.array(casted_dataset).transpose().tolist()
+    transposed = map(list, zip(*casted_dataset))
     detexted = []
     labels = []
     conversion_pipeline = {}
