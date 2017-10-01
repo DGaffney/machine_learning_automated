@@ -1,5 +1,6 @@
 import numpy as np
 import datetime
+import time
 from dateutil.parser import parse
 from nltk.stem import PorterStemmer
 import re
@@ -76,11 +77,11 @@ def cast_val(value, directive):
             return float(value)
         elif directive == "Time":
             if len(value) == 10 and sum(c.isdigit() for c in value) == 10:
-                return datetime.datetime.fromtimestamp(int(value))
+                return int(time.mktime(datetime.datetime.fromtimestamp(int(value)).timetuple()))
             elif len(value) == 13 and sum(c.isdigit() for c in value) == 13:
-                return datetime.datetime.fromtimestamp(int(value)/1000)
+                return int(time.mktime(datetime.datetime.fromtimestamp(int(value)/1000).timetuple()))
             else:
-                return parse(value, fuzzy=True)
+                return int(time.mktime(parse(value, fuzzy=True).timetuple()))
         elif directive == "Text" or directive == "Phrase":
             return [PorterStemmer().stem(word) for word in clean_str(value).split(" ")]
         elif directive == "Categorical":
@@ -114,7 +115,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 detexted.append(counted)
         elif manifest['col_classes'][i] == "Categorical":
             unique_vals = list(set(col))
-            conversion_pipeline[i] = {"unique_terms": unique_terms}
+            conversion_pipeline[i] = {"unique_terms": unique_vals}
             newcol = []
             for val in col:
                 newcol.append(unique_vals.index(val))
