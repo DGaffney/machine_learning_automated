@@ -28,8 +28,14 @@ class Dataset
         or has missing data in the CSV. Please double check the data for these erorrs and resubmit when you think you've cleaned it up.
         ")
     end
-    `rm -f #{SETTINGS["storage_location"]+"csv_data/"+self.id.to_s+".gzip"}`
-    `rm -f #{SETTINGS["storage_location"]+"conversion_pipelines/"+self.id.to_s+".gzip"}`
+    `mkdir #{SETTINGS["storage_location"]+"problem_csv_data/"}`
+    `mkdir #{SETTINGS["storage_location"]+"problem_conversion_pipelines/"}`
+    `mkdir #{SETTINGS["storage_location"]+"problem_datasets/"}`
+    f = File.open(SETTINGS["storage_location"]+"problem_datasets/"+self.id.to_s, "w")
+    f.write(self.to_json)
+    f.close
+    `mv #{SETTINGS["storage_location"]+"csv_data/"+self.id.to_s+".gzip"}`
+    `mv #{SETTINGS["storage_location"]+"conversion_pipelines/"+self.id.to_s+".gzip"}`
     `rm -f #{SETTINGS["storage_location"]+"ml_models/"+self.id.to_s+".pkl"}`
     `rm -rf #{SETTINGS["storage_location"]+"public/images/"+self.id.to_s}`
     self.destroy
