@@ -71,7 +71,7 @@ class Dataset
   end
 
   def get_current_status
-    if self.current_status == "complete"
+    if self.current_status == "complete" && self.results && !self.results.empty?
       return "Complete"
     elsif self.latest_update["percent"]
       return "≈"+self.percent_complete.to_s+"% Processed"
