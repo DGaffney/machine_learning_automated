@@ -29,7 +29,7 @@ post "/preview" do
     flash[:error] = "CSV could not be read. Try again please!"
     redirect "/profile"
   else
-    @csv = CSVValidator.new(csv.shuffle.first(1000), params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
+    @csv = CSVValidator.new(csv, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
     results = @csv.validate
     if results.class == String
       flash[:error] = results
