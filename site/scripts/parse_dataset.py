@@ -72,7 +72,12 @@ def cast_csv_given_manifest(rows, manifest):
 def cast_val(value, directive):
     try:
         if directive == "Integer":
-            return int(value)
+            if value.lower() == "false":
+                return 0
+            elif value.lower() == "true":
+                return 1
+            else:
+                return int(value)
         elif directive == "Float":
             return float(value)
         elif directive == "Time":
