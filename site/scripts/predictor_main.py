@@ -63,6 +63,29 @@ for model in models:
         current_best_model = [best_model, np.mean(scores)]
     i += 1
 
+if current_best_model == [None, -10000000.0]:
+    label_type = "Categorical"
+    score_type = "accuracy"
+    models = model_info.model_list()
+    i = 1
+    current_best_model = [None, -10000000.0]
+    for model in models:
+        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": ((i/float(len(models)))*0.75), "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
+        clf = GridSearchCV(model_info.models()[model](), model_info.hyperparameters()[model], cv=5)
+        try:
+            results= clf.fit(x, y)
+        except:
+            messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": (i/float(len(models)))*0.75})
+        try:
+            best_model = results.best_estimator_
+            scores = cross_val_score(best_model, x, y, cv=10, scoring=score_type)
+        except:
+            messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
+
+        if current_best_model[-1] < np.mean(scores):
+            current_best_model = [best_model, np.mean(scores)]
+        i += 1
+
 final_model = current_best_model[0]
 final_model.fit(x, y)
 joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
