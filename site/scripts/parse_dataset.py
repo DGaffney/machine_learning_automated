@@ -1,7 +1,7 @@
 import numpy as np
 import datetime
 import time
-from dateutil.parser import parse
+from dateutil.parser import parse as dateutilparse
 from nltk.stem import PorterStemmer
 import re
 import csv
@@ -86,7 +86,7 @@ def cast_val(value, directive):
             elif len(value) == 13 and sum(c.isdigit() for c in value) == 13:
                 return int(time.mktime(datetime.datetime.fromtimestamp(int(value)/1000).timetuple()))
             else:
-                return int(time.mktime(parse(value, fuzzy=True).timetuple()))
+                return int(time.mktime(dateutilparse(value, fuzzy=True).timetuple()))
         elif directive == "Text" or directive == "Phrase":
             return [PorterStemmer().stem(word) for word in clean_str(value).split(" ")]
         elif directive == "Categorical":
