@@ -190,11 +190,10 @@ class Dataset
   end
   
   def predict(data)
-    tmpname = self.id.to_s+rand(1000000000).to_s+".csv"
+    tmpname = self.id.to_s+rand(1000000000).to_s+".json"
     filename = SETTINGS["storage_location"]+"/predictions/"+tmpname
     f = File.open(filename, "w")
-    parsed = CSV.parse(data);false
-    parsed.collect{|p| f << p};false
+    f.write(data)
     f.close
     predictions = JSON.parse(`python scripts/predict_data.py #{self.id} #{filename}`)
     return predictions
