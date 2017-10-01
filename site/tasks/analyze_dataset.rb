@@ -17,6 +17,7 @@ class AnalyzeDataset
     script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_fast"
     current_statement = {}
     statements = []
+    puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
     IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
       io.each_line do |line|
         puts line
