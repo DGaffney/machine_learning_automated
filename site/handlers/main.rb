@@ -164,7 +164,7 @@ get "/api/:user_id/dataset/:dataset_id" do
   @user = User.find(params[:user_id])
   return {error: "Account not found"}.to_json if @user.nil?
   @dataset = Dataset.find(params[:dataset_id])
-  return JSON.parse(@dataset.to_json).merge(conversion_pipeline: @dataset.conversion_pipeline).to_json
+  return JSON.parse(@dataset.to_json).merge(conversion_pipeline: @dataset.conversion_pipeline).to_json rescue {error: "Dataset not yet available"}.to_json
 end
 
 post "/api/:user_id/predict/:dataset_id" do
@@ -172,5 +172,5 @@ post "/api/:user_id/predict/:dataset_id" do
   @user = User.find(params[:user_id])
   return {error: "Account not found"}.to_json if @user.nil?
   @dataset = Dataset.find(params[:dataset_id])
-  return @dataset.predict(params[:data]).to_json
+  return @dataset.predict(params[:data]).to_json rescue {error: "Prediction for this dataset not yet available"}.to_json
 end
