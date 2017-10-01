@@ -133,7 +133,9 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     cleared_dataset = []
     clean_dataset = np.array(detexted).transpose().tolist()
     for i,label in enumerate(labels):
-        if True not in np.isnan(np.array(clean_dataset[i])).tolist() and True not in np.isnan(np.array([label])).tolist() and None not in clean_dataset[i] and None != label:
+        print clean_dataset[i]
+        print [label]
+        if True not in np.isnan(clean_dataset[i]).tolist() and True not in np.isnan([label]).tolist() and None not in clean_dataset[i] and None != label:
             cleared_labels.append(label)
             cleared_dataset.append(clean_dataset[i])
     return cleared_dataset, cleared_labels, conversion_pipeline
