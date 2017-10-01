@@ -18,7 +18,7 @@ class Dataset
   timestamps!
 
   def wind_down(mail=false)
-    if wind_down
+    if mail
       Mailer.send(
         params[:email], 
         "Dataset #{self.filename} failed", 
