@@ -151,7 +151,7 @@ get "/profile" do
 end
 
 get "/api/:user_id" do
-  return User.find(params[:user_id]).to_json
+  return User.find(params[:user_id]).api_response.to_json
 end
 
 get "/api/:user_id/datasets" do
