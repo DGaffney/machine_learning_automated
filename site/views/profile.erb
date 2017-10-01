@@ -67,7 +67,6 @@
               <td><%= dataset.get_current_status %></td>
               <td><%= TimeDifference.between(dataset.get_updated_at, Time.now).humanize %></td>
             </tr>
-            <br />
           <% end %>
         </tbody>
       </table>
