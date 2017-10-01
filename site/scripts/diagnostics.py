@@ -116,7 +116,8 @@ def generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic
     visualizer.fit_transform(x,y)
     visualizer.poof(outpath=diagnostic_image_path+"/pca_3.png")
     plt.clf()
-    return {"accuracy": (tp+tn)/float(len(guesses)), "confusion_matrix": conmat, "auc": roc_auc_score(*np.array(guesses).transpose())}
+    #"auc": roc_auc_score(*np.array(guesses).transpose()) NEEDS TO BE FIXED.
+    return {"accuracy": (tp+tn)/float(len(guesses)), "confusion_matrix": conmat}
 
 def generate_categorical_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path):
     generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)

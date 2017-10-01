@@ -29,13 +29,13 @@ class Dataset
   end
 
   def binary_measurement_human_language
-    if self.results["diagnostic_results"]["accuracy"] > 0.8 && self.results["diagnostic_results"]["auc"] > 0.8
+    if self.results["diagnostic_results"]["accuracy"] > 0.8# && self.results["diagnostic_results"]["auc"] > 0.8
       return "is very accurate"
-    elsif self.results["diagnostic_results"]["accuracy"] > 0.6 && self.results["diagnostic_results"]["auc"] > 0.5
+    elsif self.results["diagnostic_results"]["accuracy"] > 0.6# && self.results["diagnostic_results"]["auc"] > 0.5
       return "is mildly accurate"
-    elsif self.results["diagnostic_results"]["accuracy"] > 0.5 && self.results["diagnostic_results"]["auc"] > 0.5
+    elsif self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
       return "is better than chance"
-    else self.results["diagnostic_results"]["accuracy"] > 0.5 && self.results["diagnostic_results"]["auc"] > 0.5
+    else self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
       return "performs poorly"
     end
   end
