@@ -16,6 +16,25 @@ class Dataset
   key :feature_count, Integer
   key :csv_preview_row, Array
   timestamps!
+
+  def wind_down(mail=false)
+    if wind_down
+      Mailer.send(
+        params[:email], 
+        "Dataset #{self.filename} failed", 
+        "Hey,<br/>
+        Unfortunately, the dataset that you submitted didn't pass muster for the machine learners.
+        Typically this happens when the dataset has many complicated data types, mixes data types in a single column,
+        or has missing data in the CSV. Please double check the data for these erorrs and resubmit when you think you've cleaned it up.
+        ")
+    end
+    `rm #{SETTINGS["storage_location"]+"/csv_data/"+self.id.to_s+".gzip"}`
+    `rm #{SETTINGS["storage_location"]+"/conversion_pipelines/"+self.id.to_s+".gzip"}`
+    `rm #{SETTINGS["storage_location"]+"/ml_models/"+self.id.to_s+".pkl"}`
+    `rm -r #{SETTINGS["storage_location"]+"/public/images/"+self.id.to_s}`
+    self.destroy
+  end
+
   def tipped_over?
     self.results && self.results.empty? && self.current_status == "complete"
   end
@@ -168,5 +187,16 @@ class Dataset
     "SGDClassifier" => "https://en.wikipedia.org/wiki/Gradient_descent",
     "SVC" => "https://en.wikipedia.org/wiki/Support_vector_machine",
     "SVR" => "https://en.wikipedia.org/wiki/Support_vector_machine"}
+  end
+  
+  def predict(data)
+    tmpname = self.id.to_s+rand(1000000000).to_s+".csv"
+    filename = SETTINGS["storage_location"]+"/predictions/"+tmpname
+    f = File.open(filename, "w")
+    parsed = CSV.parse(data);false
+    parsed.collect{|p| f << p};false
+    f.close
+    predictions = JSON.parse(`python scripts/predict_data.py #{self.id} #{filename}`)
+    return predictions
   end
 end

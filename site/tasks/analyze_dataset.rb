@@ -39,8 +39,7 @@ class AnalyzeDataset
       @dataset.current_status = "complete"
       @dataset.save!
     end
-    puts "Tipped over:"
-    puts @dataset.tipped_over?
+    @dataset.wind_down(true) if @dataset.tipped_over?
   end
   
   def run_python_file(command)

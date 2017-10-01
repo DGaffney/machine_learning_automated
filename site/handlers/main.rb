@@ -46,6 +46,7 @@ end
 post "/datasets/:user_id/:dataset_id" do
   redirect "/" if current_user.nil?
   @dataset = Dataset.find(params["dataset_id"])
+  redirect "/profile" if @dataset.nil?
   params.select{|k,v| k.include?("header_class_")}.collect{|k,v| [k.gsub("header_class_", "").to_i, v]}.each do |row_num, classtype|
     @dataset.col_classes[row_num] = classtype if @dataset.col_classes[row_num] != classtype
   end;false
@@ -147,4 +148,28 @@ get "/profile" do
   redirect "/" if current_user.nil?
   @datasets = Dataset.where(user_id: current_user_id)
   erb :"profile"
+end
+
+get "/api/:user_id" do
+  return User.find(params[:user_id]).to_json
+end
+
+get "/api/:user_id/datasets" do
+  @user = User.find(params[:user_id])
+  return {error: "Account not found"}.to_json if @user.nil?
+  return Dataset.where(user_id: @user.id).to_a.to_json
+end
+
+get "/api/:user_id/dataset/:dataset_id" do
+  @user = User.find(params[:user_id])
+  return {error: "Account not found"}.to_json if @user.nil?
+  @dataset = Dataset.find(params[:dataset_id])
+  return JSON.parse(@dataset.to_json).merge(conversion_pipeline: @dataset.conversion_pipeline)
+end
+
+post "/api/:user_id/predict" do
+  @user = User.find(params[:user_id])
+  return {error: "Account not found"}.to_json if @user.nil?
+  @dataset = Dataset.find(params[:dataset_id])
+  return @dataset.predict(params[:data]).to_json
 end
