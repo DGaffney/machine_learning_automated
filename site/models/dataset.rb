@@ -57,6 +57,7 @@ class Dataset
     d.user_id = user_id
     d.row_count = csv_obj.csv_data.count
     d.feature_count = csv_obj.csv_data[0].count-1
+    csv_obj.csv_data = csv_obj.csv_data[1..-1];false if csv_obj.headers == csv_obj.csv_data[0]
     f = File.open(SETTINGS["storage_location"]+"/csv_data/"+d.id.to_s+".gzip", "w")
     f.write(Zlib::Deflate.deflate(csv_obj.csv_data.collect{|r| CSV.generate{|csv| csv << r}}.join("")))
     f.close
