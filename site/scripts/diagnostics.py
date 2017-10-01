@@ -120,7 +120,7 @@ def generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic
     return {"accuracy": (tp+tn)/float(len(guesses)), "confusion_matrix": conmat}
 
 def generate_categorical_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path):
-    generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
+    return generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
 
 
 
