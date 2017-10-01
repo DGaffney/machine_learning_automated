@@ -14,7 +14,7 @@ class AnalyzeDataset
     manifest_file = File.open(filename.gsub(".csv", "")+"_manifest.json", "w")
     manifest_file.write(@dataset.to_json)
     manifest_file.close
-    script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_fast"
+    script = @dataset.prediction_speed == 2 ? "predictor_main" : "predictor_fast"
     current_statement = {}
     statements = []
     puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
