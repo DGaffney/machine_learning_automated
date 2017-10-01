@@ -129,4 +129,11 @@ def convert_text_fields_to_data(casted_dataset, manifest):
             average = np.mean([float(c) for c in col if c != None])
             conversion_pipeline[i] = {"average": average}
             detexted.append(list(replaceiniter(col, lambda x: x==None, average)))
-    return np.array(detexted).transpose().tolist(), labels, conversion_pipeline
+    cleared_labels = []
+    cleared_dataset = []
+    clean_dataset = np.array(detexted).transpose().tolist()
+    for i,label in enumerate(labels):
+        if True not in np.isnan(x[i]).tolist() and True not in np.isnan([label]).tolist() and None not in x[i] and None != label:
+            cleared_labels.append(label)
+            cleared_dataset.append(x[i])
+    return cleared_dataset, cleared_labels, conversion_pipeline
