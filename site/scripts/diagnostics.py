@@ -76,7 +76,6 @@ def generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic
         model = current_best_model[0].fit(X_train, y_train)
         for guess in zip(y_test.tolist(), model.predict(X_test).tolist()):
             guesses.append(guess)
-    print guesses
     conmat = {}
     if len(set(y)) == 2:
         tn, fp, fn, tp = confusion_matrix(*np.array(guesses).transpose()).ravel()

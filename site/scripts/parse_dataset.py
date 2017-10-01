@@ -120,9 +120,6 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 newcol.append(unique_vals.index(val))
             detexted.append(newcol)
         else:
-            print manifest['col_classes'][i]
-            print i
-            print col
             average = np.mean([float(c) for c in col if c != None])
             conversion_pipeline[i] = {"average": average}
             detexted.append(list(replaceiniter(col, lambda x: x==None, average)))
