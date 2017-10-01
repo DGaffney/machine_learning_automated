@@ -46,6 +46,7 @@ i = 1
 current_best_model = [None, -10000000.0]
 for model in models:
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
+    scores = []
     try:
         scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
     except:
