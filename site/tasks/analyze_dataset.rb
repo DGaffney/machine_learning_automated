@@ -40,6 +40,8 @@ class AnalyzeDataset
       @dataset.current_status = "complete"
       @dataset.save!
     end
+    `rm #{filename}`
+    `rm #{filename.gsub(".csv", "")+"_manifest.json"}`
     @dataset.wind_down(true) if @dataset.tipped_over?
   end
   
