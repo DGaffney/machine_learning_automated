@@ -11,7 +11,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import median_absolute_error
 from sklearn.metrics import explained_variance_score
-#from yellowbrick.classifier import ROCAUC
+from yellowbrick.classifier import ROCAUC
 from yellowbrick.classifier.classification_report import ClassificationReport
 from yellowbrick.classifier.confusion_matrix import ConfusionMatrix
 from yellowbrick.regressor import PredictionError, ResidualsPlot
