@@ -107,7 +107,10 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     conversion_pipeline = {}
     for i,col in enumerate(transposed):
         if i == int(manifest['prediction_column']):
-            labels = col
+            if type(col) == type([]) or type(col) == type(()):
+                labels = [str.join(" ", el) for el in col]
+            else:
+                labels = col
         elif manifest['col_classes'][i] == "Phrase" or manifest['col_classes'][i] == "Text":
             #future feature is to do word-after-word approach vis-a-vis RNNs/CNNs instead of simple counts
             unique_terms = list(set([item for sublist in col for item in sublist]))
@@ -133,7 +136,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     cleared_dataset = []
     clean_dataset = np.array(detexted).transpose().tolist()
     for i,label in enumerate(labels):
-        if None not in clean_dataset[i] and None != label and True not in np.isnan(clean_dataset[i]).tolist() and True not in np.isnan([label]).tolist():
+        if None not in clean_dataset[i] and None != label and True not in np.isnan(clean_dataset[i]).tolist() and np.nan != label:
             cleared_labels.append(label)
             cleared_dataset.append(clean_dataset[i])
     return cleared_dataset, cleared_labels, conversion_pipeline
