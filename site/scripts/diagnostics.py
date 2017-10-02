@@ -89,6 +89,7 @@ def generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic
             fn = len([el for el in guesses if el[0] != val and el[1] == val])
             conmat[str(val)] = {"tn": tn, "tp": tp, "fn": fn, "fp": fp}
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
+    print str(int(np.random.random()*1000000))+"_binary.pkl"
     pickle.dump( [current_best_model, list(set(y)), X_train, X_test, y_train, y_test], open( str(int(np.random.random()*1000000))+"_binary.pkl", "wb" ) )
     visualizer = ROCAUC(current_best_model[0], classes=list(set(y)))
     visualizer.fit(X_train, y_train) 
