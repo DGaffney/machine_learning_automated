@@ -17,6 +17,22 @@ class Dataset
   key :csv_preview_row, Array
   timestamps!
 
+  def self.refresh_problem_dataset(dataset_id)
+    csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"problem_csv_data/"+dataset_id+".gzip")))
+    manifest = JSON.parse(File.read(SETTINGS["storage_location"]+"problem_datasets/"+dataset_id))
+    tmpname = "problem_"+rand(1000000).to_s
+    csv = CSV.open("tmp/#{tmpname}.csv", "w")
+    csv_data.each do |row|
+      csv << row
+    end;false
+    csv.close
+    json = File.open("tmp/#{tmpname}.json", "w")
+    json.write(manifest.to_json)
+    json.close
+    command = "python scripts/predictor_fast.py tmp/#{tmpname}.csv tmp/#{tmpname}.json #{manifest["col_classes"][manifest["prediction_column"]]}"
+    puts command
+    `#{command}`
+  end
   def wind_down(mail=false)
     if mail
       Mailer.send(

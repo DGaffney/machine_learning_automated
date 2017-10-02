@@ -107,7 +107,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     conversion_pipeline = {}
     for i,col in enumerate(transposed):
         if i == int(manifest['prediction_column']):
-            if type(col) == type([]) or type(col) == type(()):
+            if type(col[0]) == type([]) or type(col[0]) == type(()):
                 labels = [str.join(" ", el) for el in col]
             else:
                 labels = col
