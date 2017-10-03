@@ -125,6 +125,12 @@ def generate_categorical_diagnostics(x, y, current_best_model, label_type, diagn
     return generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
 
 
+def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path):
+    final_model = current_best_model[0]
+    final_model.fit(x, y)
+    joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
+    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": current_best_model[0].get_params(), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": diagnostics.generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
+
 
 #visualizer = Rank2D(features=x, algorithm='pearson')
 #visualizer.fit(x, y)
