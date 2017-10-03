@@ -45,6 +45,7 @@ if label_type == "Ordinal":
 
 i = 1
 current_best_model = [None, -10000000.0]
+scores = []
 for model in models:
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": ((i/float(len(models)))*0.75), "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     clf = GridSearchCV(model_info.models()[model](), model_info.hyperparameters()[model], cv=5)
@@ -57,7 +58,7 @@ for model in models:
         scores = cross_val_score(best_model, x, y, cv=10, scoring=score_type)
     except:
         messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
-    if current_best_model[-1] < np.mean(scores):
+    if current_best_model[-1] < np.mean(scores) and len(scores) != 0:
         current_best_model = [best_model, np.mean(scores)]
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
     i += 1
@@ -80,7 +81,7 @@ if current_best_model == [None, -10000000.0]:
             scores = cross_val_score(best_model, x, y, cv=10, scoring=score_type)
         except:
             messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
-        if current_best_model[-1] < np.mean(scores):
+        if current_best_model[-1] < np.mean(scores) and len(scores) != 0:
             current_best_model = [best_model, np.mean(scores)]
             diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
         i += 1
