@@ -111,8 +111,7 @@ class Dataset
     f = File.open(SETTINGS["storage_location"]+"/csv_data/"+d.id.to_s+".gzip", "w")
     f.write(Zlib::Deflate.deflate(csv_obj.csv_data.collect{|r| CSV.generate{|csv| csv << r}}.join("")))
     f.close
-    binding.pry
-    d.filesize_mb = `ls -l #{SETTINGS["storage_location"]+"/csv_data/"+d.id.to_s+".gzip"}`.split(" ").to_i/1024.0/1024
+    d.filesize_mb = `ls -l #{SETTINGS["storage_location"]+"/csv_data/"+d.id.to_s+".gzip"}`.split(" ")[4].to_i/1024.0/1024
     d.save!
     d
   end
