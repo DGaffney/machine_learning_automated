@@ -4,6 +4,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import messenger
+from sklearn.externals import joblib
 from sklearn.metrics import r2_score
 from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix

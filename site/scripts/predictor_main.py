@@ -1,7 +1,6 @@
 import os
 import json
 import messenger
-from sklearn.externals import joblib
 import parse_dataset
 import model_info
 import diagnostics
