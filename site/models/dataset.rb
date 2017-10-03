@@ -35,7 +35,7 @@ class Dataset
   end
 
   def has_model
-    self.conversion_pipeline && !self.conversion_pipeline.empty?
+    self.conversion_pipeline && !self.conversion_pipeline.empty? rescue false
   end
 
   def wind_down(mail=false)
