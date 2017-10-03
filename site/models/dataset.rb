@@ -33,6 +33,11 @@ class Dataset
     puts command
     `#{command}`
   end
+
+  def has_model
+    self.conversion_pipeline && !self.conversion_pipeline.empty?
+  end
+
   def wind_down(mail=false)
     if mail
       Mailer.send(

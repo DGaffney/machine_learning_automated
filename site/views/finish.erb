@@ -1,5 +1,5 @@
 <h1><%= @dataset.filename %></h1>
-<% if @dataset.get_current_status != "Complete"%>
+<% if @dataset.get_current_status != "Complete" && @dataset.%>
 <div class="row">
   <div class="col-sm-12">
     <%= @dataset.dataset_description %> Below is some information about the models' current progress.
@@ -30,11 +30,13 @@
       <li>Dataset Read</li>
       <li>Comparing Models</li>
       <li>Current Model Running: <%= @dataset.latest_update["model_running"].split("(").first %></li>
-      <li>Current Best Model: <%= @dataset.latest_update["best_model"][0].split("(").first %></li>
-      <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
-      <li>Current Model Accuracy: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
-      <% else %>
-      <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+      <% if @dataset.latest_update["best_model"][0].split("(").first != "None" %>
+        <li>Current Best Model: <%= @dataset.latest_update["best_model"][0].split("(").first %></li>
+        <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
+        <li>Current Model Accuracy: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+        <% else %>
+        <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+        <% end %>
       <% end %>
       <% end %>
     </ul>
