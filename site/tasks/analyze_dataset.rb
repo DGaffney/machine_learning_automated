@@ -25,10 +25,11 @@ class AnalyzeDataset
         if !current_statement.nil?
           statements << current_statement
           if current_statement["model_found"] == "true"
+            @dataset.reload
             @dataset.clear_updater
             @dataset.write_final_result(current_statement)
+            binding.pry
             @dataset.last_analyzed_at = Time.now
-            @dataset.current_status = "complete"
             @dataset.save!
           end
           puts statements.length
