@@ -24,6 +24,13 @@ class AnalyzeDataset
         current_statement = JSON.parse(line.strip) rescue nil
         if !current_statement.nil?
           statements << current_statement
+          if current_statement["model_found"] == "true"
+            @dataset.clear_updater
+            @dataset.write_final_result(current_statement)
+            @dataset.last_analyzed_at = Time.now
+            @dataset.current_status = "complete"
+            @dataset.save!
+          end
           puts statements.length
           @dataset.reload
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
