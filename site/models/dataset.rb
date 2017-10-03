@@ -50,7 +50,6 @@ class Dataset
     f = File.open(SETTINGS["storage_location"]+"problem_datasets/"+self.id.to_s, "w")
     f.write(self.to_json)
     f.close
-    binding.pry
     `mv #{SETTINGS["storage_location"]+"csv_data/"+self.id.to_s+".gzip"} #{SETTINGS["storage_location"]+"problem_csv_data/"}`
     `mv #{SETTINGS["storage_location"]+"conversion_pipelines/"+self.id.to_s+".gzip"} #{SETTINGS["storage_location"]+"problem_conversion_pipelines/"}`
     `rm -f #{SETTINGS["storage_location"]+"ml_models/"+self.id.to_s+".pkl"}`
