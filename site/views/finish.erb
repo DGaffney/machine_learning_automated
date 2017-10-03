@@ -1,5 +1,5 @@
 <h1><%= @dataset.filename %></h1>
-<% if @dataset.get_current_status != "Complete" && @dataset.%>
+<% if @dataset.get_current_status != "Complete" %>
 <div class="row">
   <div class="col-sm-12">
     <%= @dataset.dataset_description %> Below is some information about the models' current progress.
@@ -76,6 +76,8 @@
     </code></pre>
   </div>
 </div>
+<% end %>
+<% if @dataset.has_model %>
 <div class="row">
   <div class="col-sm-12">
     <h5>Plots</h5>
@@ -121,7 +123,6 @@
     <% end %>
   </div>
 </div>
-
 <% end %>
 
 <script>
