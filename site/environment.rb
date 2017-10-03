@@ -31,5 +31,7 @@ Dir[File.dirname(__FILE__) + '/lib/*.rb'].each {|file| require file }
 Dir[File.dirname(__FILE__) + '/tasks/*.rb'].each {|file| require file }
 set :erb, :layout => :'layouts/main'
 enable :sessions
-
+configure {
+  set :server, :puma
+}
 helpers LayoutHelper
