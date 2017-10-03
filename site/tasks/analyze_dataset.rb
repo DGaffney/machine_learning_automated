@@ -28,7 +28,6 @@ class AnalyzeDataset
             @dataset.reload
             @dataset.clear_updater
             @dataset.write_final_result(current_statement)
-            binding.pry
             @dataset.last_analyzed_at = Time.now
             @dataset.save!
           end
