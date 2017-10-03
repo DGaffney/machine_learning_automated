@@ -42,6 +42,12 @@ if label_type == "Ordinal":
     models = model_info.fast_ordinal_models()
     score_type = "r2"
 
+def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path):
+    final_model = current_best_model[0]
+    final_model.fit(x, y)
+    joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
+    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": current_best_model[0].get_params(), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": diagnostics.generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
+
 i = 1
 current_best_model = [None, -10000000.0]
 for model in models:
@@ -53,6 +59,7 @@ for model in models:
         messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
+        store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
     i += 1
 
 if current_best_model == [None, -10000000.0]:
@@ -70,9 +77,7 @@ if current_best_model == [None, -10000000.0]:
             messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
         if current_best_model[-1] < np.mean(scores):
             current_best_model = [model, np.mean(scores)]
+            store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
         i += 1
 
-final_model = current_best_model[0]
-final_model.fit(x, y)
-joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
-print json.dumps({"label_type": label_type, "model_params": current_best_model[0].get_params(), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": diagnostics.generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
+store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
