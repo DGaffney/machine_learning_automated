@@ -79,7 +79,7 @@ def cast_val(value, directive):
             else:
                 return int(value)
         elif directive == "Float":
-            return float(re.sub("[^0-9]", "", value))
+            return float(re.sub("[^0-9\.\-]", "", value))
         elif directive == "Time":
             if len(value) == 10 and sum(c.isdigit() for c in value) == 10:
                 return int(time.mktime(datetime.datetime.fromtimestamp(int(value)).timetuple()))
