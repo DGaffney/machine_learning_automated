@@ -23,9 +23,9 @@ class CSVValidator
     end;false
     header = contains_header(classes)
     tmpclasses = header ? classes.collect{|c| c[1..-1]} : classes
+    self.headers = header ? self.csv_data[0] : 1.upto(cols.count).collect{|x| "Column #{x} (#{self.col_classes[x-1]})"}
     self.csv_data = header ? cols.collect{|c| c[1..-1]} : cols
     self.col_classes = get_classes(tmpclasses, header)    
-    self.headers = header ? self.csv_data[0] : 1.upto(cols.count).collect{|x| "Column #{x} (#{self.col_classes[x-1]})"}
     self.csv_data = self.csv_data.transpose
     true
   end
