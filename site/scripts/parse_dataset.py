@@ -9,7 +9,7 @@ import os
 import sys
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
-from collections import Counter()
+from collections import Counter
 
 def label_type(y, y_type):
     if len(set(y)) == 2 and y_type in ["Categorical", "Float", "Integer"]:
