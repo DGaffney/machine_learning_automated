@@ -98,9 +98,9 @@ def cast_val(value, directive):
 
 
 def parse(data_filename, manifest_filename):
-    rows = read_csv(data_filename)
-    manifest = read_json(manifest_filename)
-    return convert_text_fields_to_data(cast_csv_given_manifest(rows, manifest), manifest), manifest
+    rows = parse_dataset.read_csv(data_filename)
+    manifest = parse_dataset.read_json(manifest_filename)
+    return convert_text_fields_to_data(parse_dataset.cast_csv_given_manifest(rows, manifest), manifest), manifest
 
 def convert_text_fields_to_data(casted_dataset, manifest):
     transposed = map(list, zip(*casted_dataset))
@@ -108,6 +108,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     labels = []
     conversion_pipeline = {}
     for i,col in enumerate(transposed):
+        print i
         if i == int(manifest['prediction_column']):
             if type(col[0]) == type([]) or type(col[0]) == type(()):
                 labels = [str.join(" ", el) for el in col]
@@ -116,13 +117,16 @@ def convert_text_fields_to_data(casted_dataset, manifest):
         elif manifest['col_classes'][i] == "Phrase" or manifest['col_classes'][i] == "Text":
             #future feature is to do word-after-word approach vis-a-vis RNNs/CNNs instead of simple counts
             tf = TfidfVectorizer(analyzer='word', ngram_range=(1,1), min_df = 0, stop_words = 'english')
-            tfidf_matrix =  tf.fit_transform([str.join(" ", el) for el in col])
-            feature_names = tf.get_feature_names()
-            word_scores = Counter()
-            for doc_i in range(tfidf_matrix.shape[0]):
-                for word_index in tfidf_matrix[doc_i,:].nonzero()[1]:
-                    word_scores[feature_names[word_index]] += tfidf_matrix[doc_i, word_index]
-            unique_terms = [el[0] for el in word_scores.most_common(200)]
+            try:
+                tfidf_matrix =  tf.fit_transform([str.join(" ", el) for el in col])
+                feature_names = tf.get_feature_names()
+                word_scores = Counter()
+                for doc_i in range(tfidf_matrix.shape[0]):
+                    for word_index in tfidf_matrix[doc_i,:].nonzero()[1]:
+                        word_scores[feature_names[word_index]] += tfidf_matrix[doc_i, word_index]
+                unique_terms = [el[0] for el in word_scores.most_common(200)]
+            except:
+                unique_terms = [el[0] for el in Counter(list([item for sublist in col for item in sublist])).most_common(200)]
             conversion_pipeline[i] = {"unique_terms": unique_terms}
             counteds = []
             for term in unique_terms:
