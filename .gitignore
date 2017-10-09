@@ -1,3 +1,4 @@
+*.rdb
 *.json
 *.csv
 *.txt
