@@ -98,9 +98,9 @@ def cast_val(value, directive):
 
 
 def parse(data_filename, manifest_filename):
-    rows = parse_dataset.read_csv(data_filename)
-    manifest = parse_dataset.read_json(manifest_filename)
-    return convert_text_fields_to_data(parse_dataset.cast_csv_given_manifest(rows, manifest), manifest), manifest
+    rows = read_csv(data_filename)
+    manifest = read_json(manifest_filename)
+    return convert_text_fields_to_data(cast_csv_given_manifest(rows, manifest), manifest), manifest
 
 def convert_text_fields_to_data(casted_dataset, manifest):
     transposed = map(list, zip(*casted_dataset))
