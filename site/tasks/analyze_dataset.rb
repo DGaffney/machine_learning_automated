@@ -17,8 +17,8 @@ class AnalyzeDataset
     script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_main"
     current_statement = {}
     statements = []
-    puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
-    IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
+    puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
+    IO.popen("python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
       io.each_line do |line|
         puts line
         current_statement = JSON.parse(line.strip) rescue nil
@@ -35,6 +35,29 @@ class AnalyzeDataset
           @dataset.reload
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
+        end
+      end
+    end
+    if @dataset.prediction_speed == 2
+      puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
+      IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
+        io.each_line do |line|
+          puts line
+          current_statement = JSON.parse(line.strip) rescue nil
+          if !current_statement.nil?
+            statements << current_statement
+            if current_statement["model_found"] == "true"
+              @dataset.reload
+              @dataset.clear_updater
+              @dataset.write_final_result(current_statement)
+              @dataset.last_analyzed_at = Time.now
+              @dataset.save!
+            end
+            puts statements.length
+            @dataset.reload
+            #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
+            @dataset.save!
+          end
         end
       end
     end

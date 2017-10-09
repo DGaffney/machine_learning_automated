@@ -18,8 +18,8 @@ class CSVValidator
     cols = []
     classes = []
     transposable.each do |col|
-      cols << col.collect{|v| to_something(v)}
-      classes << cols[-1].collect(&:class)
+      cols << cleaned_cols
+      classes << cleaned_cols.collect(&:class)
     end;false
     header = contains_header(classes)
     tmpclasses = header ? classes.collect{|c| c[1..-1]} : classes
@@ -65,7 +65,6 @@ class CSVValidator
   end
 
   def contains_header(classes)
-  self.csv_data.collect(&:first)
     classes.collect(&:first).uniq.first == String && classes.collect(&:first) != classes.collect(&:last)
   end
 
