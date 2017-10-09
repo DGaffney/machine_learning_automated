@@ -8,6 +8,7 @@ import csv
 import os
 import sys
 import json
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 def label_type(y, y_type):
     if len(set(y)) == 2 and y_type in ["Categorical", "Float", "Integer"]:
@@ -113,7 +114,14 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 labels = col
         elif manifest['col_classes'][i] == "Phrase" or manifest['col_classes'][i] == "Text":
             #future feature is to do word-after-word approach vis-a-vis RNNs/CNNs instead of simple counts
-            unique_terms = list(set([item for sublist in col for item in sublist]))
+            tf = TfidfVectorizer(analyzer='word', ngram_range=(1,1), min_df = 0, stop_words = 'english')
+            tfidf_matrix =  tf.fit_transform([str.join(" ", el) for el in col])
+            feature_names = tf.get_feature_names()
+            word_scores = Counter()
+            for doc_i in range(tfidf_matrix.shape[0]):
+                for word_index in tfidf_matrix[doc_i,:].nonzero()[1]:
+                    word_scores[feature_names[word_index]] += tfidf_matrix[doc_i, word_index]
+            unique_terms = [el[0] for el in word_scores.most_common(200)]
             conversion_pipeline[i] = {"unique_terms": unique_terms}
             counteds = []
             for term in unique_terms:
