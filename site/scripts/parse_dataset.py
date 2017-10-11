@@ -10,6 +10,9 @@ import sys
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import Counter
+from nltk.corpus import stopwords 
+from nltk.stem.wordnet import WordNetLemmatizer
+import string
 
 def label_type(y, y_type):
     if len(set(y)) == 2 and y_type in ["Categorical", "Float", "Integer"]:
@@ -102,6 +105,22 @@ def parse(data_filename, manifest_filename):
     manifest = read_json(manifest_filename)
     return convert_text_fields_to_data(cast_csv_given_manifest(rows, manifest), manifest), manifest
 
+def clean(doc):
+    stop_free = " ".join([i for i in doc.lower().split() if i not in stop])
+    punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
+    normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
+    return normalized
+
+def is_email(string):
+    re.split("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", string)
+
+def is_phone_number(string):
+    pattern = re.compile("^[\dA-Z]{3}-[\dA-Z]{3}-[\dA-Z]{4}$", re.IGNORECASE)
+    return pattern.match(phone_nuber) is not None
+
+def is_email(string):
+    re.split("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", string)
+
 def convert_text_fields_to_data(casted_dataset, manifest):
     transposed = map(list, zip(*casted_dataset))
     detexted = []
@@ -116,6 +135,10 @@ def convert_text_fields_to_data(casted_dataset, manifest):
         elif manifest['col_classes'][i] == "Phrase" or manifest['col_classes'][i] == "Text":
             #future feature is to do word-after-word approach vis-a-vis RNNs/CNNs instead of simple counts
             tf = TfidfVectorizer(analyzer='word', ngram_range=(1,1), min_df = 0, stop_words = 'english')
+            stop = set(stopwords.words('english'))
+            exclude = set(string.punctuation)
+            lemma = WordNetLemmatizer()
+            [clean(str.join(" ", row)) for row in col]
             try:
                 tfidf_matrix =  tf.fit_transform([str.join(" ", el) for el in col])
                 feature_names = tf.get_feature_names()

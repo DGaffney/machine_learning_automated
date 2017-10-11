@@ -18,8 +18,8 @@ class CSVValidator
     cols = []
     classes = []
     transposable.each do |col|
-      cols << cleaned_cols
-      classes << cleaned_cols.collect(&:class)
+      cols << col.collect{|v| to_something(v)}
+      classes << cols[-1].collect(&:class)
     end;false
     header = contains_header(classes)
     tmpclasses = header ? classes.collect{|c| c[1..-1]} : classes

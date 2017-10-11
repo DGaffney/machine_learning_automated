@@ -13,6 +13,9 @@ require 'postmark'
 require 'open3'
 require 'time_difference'
 require 'chronic'
+require 'phoner'
+require 'street_address'
+Phoner::Phone.default_country_code = '1'
 SETTINGS = YAML.load(File.read("settings.json")) rescue {"download_path" => "#{`pwd`.strip}/../data"}
 `mkdir -p #{SETTINGS["storage_location"]}/csv_data`
 `mkdir -p #{SETTINGS["storage_location"]}/ml_models`
