@@ -147,9 +147,17 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 newcol.append(unique_vals.index(val))
             detexted.append(newcol)
         else:
-            average = np.mean([float(c) for c in col if c != None])
-            conversion_pipeline[i] = {"average": average}
-            detexted.append(list(replaceiniter(col, lambda x: x==None, average)))
+            non_none = [float(c) for c in col if c != None]
+            average = np.mean(non_none)
+            minval = min(non_none)
+            maxval = max(non_none)
+            stdev = np.std(non_none)
+            conversion_pipeline[i] = {"average": average, "min": minval, "max": maxval, "stdev": stdev}
+            replaced = list(replaceiniter(col, lambda x: x==None, average))
+            detexted.append(replaced)
+            detexted.append(((np.array(replaced)-minval)/(maxval-minval)).tolist())
+            detexted.append(((np.array(replaced)-average)/(stdev)).tolist())
+            detexted.append(np.abs(replaced))
     cleared_labels = []
     cleared_dataset = []
     clean_dataset = np.array(detexted).transpose().tolist()

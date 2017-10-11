@@ -43,6 +43,7 @@ if label_type == "Ordinal":
 
 i = 1
 current_best_model = [None, -10000000.0]
+best_performing_models = []
 for model in models:
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     scores = []
@@ -52,10 +53,12 @@ for model in models:
         messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
+        best_performing_models.append(model)
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
     i += 1
 
 if current_best_model == [None, -10000000.0]:
+    best_performing_models = []
     label_type = "Categorical"
     score_type = "accuracy"
     models = model_info.fast_models()
@@ -70,6 +73,7 @@ if current_best_model == [None, -10000000.0]:
             messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
         if current_best_model[-1] < np.mean(scores):
             current_best_model = [model, np.mean(scores)]
+            best_performing_models.append(model)
             diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
         i += 1
 
