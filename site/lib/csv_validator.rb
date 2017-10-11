@@ -18,8 +18,8 @@ class CSVValidator
     cols = []
     classes = []
     transposable.each do |col|
-      cols << col.collect{|v| to_something(v)}
-      classes << cols[-1].collect(&:class)
+      cols << cleaned_cols
+      classes << cleaned_cols.collect(&:class)
     end;false
     header = contains_header(classes)
     tmpclasses = header ? classes.collect{|c| c[1..-1]} : classes
@@ -78,6 +78,12 @@ class CSVValidator
     else 
       tm = Chronic.parse(str) rescue nil
       return tm if !tm.nil?
+      pn = Phoner::Phone.parse(str)
+      return pn if !pn.nil?
+      em = EmailAddress.valid? str
+      return EmailAddress.new(str) if em == true
+      address = StreetAddress::US.parse(str)
+      return EmailAddress.new(str) if em == true      
       # Time.parse does not raise an error for invalid input
       str
     end
