@@ -42,10 +42,8 @@ if label_type == "Ordinal":
     models = model_info.fast_ordinal_models()
     score_type = "r2"
 
-i = 1
-current_best_model = [None, -10000000.0]
-best_performing_models = []
-for model in models:
+@timeout(120)
+def try_model(model):
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     scores = []
     try:
@@ -57,6 +55,24 @@ for model in models:
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+
+@timeout(120)
+def try_ensemble_model(models):
+    try:
+        model = VotingClassifier([(str(el), el) for el in models], voting="soft")
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    except:
+        model = VotingClassifier([(str(el), el) for el in models])
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    if current_best_model[-1] < np.mean(scores):
+        current_best_model = [model, np.mean(scores)]
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+
+i = 1
+current_best_model = [None, -10000000.0]
+best_performing_models = []
+for model in models:
+    try_model(model)
     i += 1
 
 if current_best_model == [None, -10000000.0]:
@@ -67,33 +83,14 @@ if current_best_model == [None, -10000000.0]:
     i = 1
     current_best_model = [None, -10000000.0]
     for model in models:
-        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
-        scores = []
-        try:
-            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-        except:
-            messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
-        if np.abs(current_best_model[-1] - np.mean(scores)) < 0.05 or current_best_model[0] == None:
-            best_performing_models.append(model)
-        if current_best_model[-1] < np.mean(scores):
-            current_best_model = [model, np.mean(scores)]
-            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+        try_model(model)
         i += 1
 
-current_best_model = [None, -10000000.0]
 if len(best_performing_models) > 1:
     for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 10)[0]):
         model_count += 2
         for i in range(run_count):
             models = list(diagnostics.random_combination(best_performing_models, model_count))
-            try:
-                model = VotingClassifier([(str(el), el) for el in models], voting="soft")
-                scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-            except:
-                model = VotingClassifier([(str(el), el) for el in models])
-                scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-            if current_best_model[-1] < np.mean(scores):
-                current_best_model = [model, np.mean(scores)]
-                diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+            try_ensemble_model(models)
 
 diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
