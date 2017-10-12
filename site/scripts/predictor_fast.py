@@ -88,10 +88,10 @@ for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_
         models = list(diagnostics.random_combination(best_performing_models, model_count))
         try:
             model = VotingClassifier([(str(el), el) for el in models], voting="soft")
-            scores = cross_val_score(voter, x, y, cv=10, scoring=score_type)
+            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
         except:
             model = VotingClassifier([(str(el), el) for el in models])
-            scores = cross_val_score(voter, x, y, cv=10, scoring=score_type)
+            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
         if current_best_model[-1] < np.mean(scores):
             current_best_model = [model, np.mean(scores)]
             diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
