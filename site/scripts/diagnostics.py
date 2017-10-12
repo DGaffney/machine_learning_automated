@@ -25,6 +25,8 @@ from yellowbrick.features.rankd import Rank1D, Rank2D
 from sklearn.model_selection import train_test_split
 from yellowbrick.features.pca import PCADecomposition
 import json
+from sklearn.ensemble import VotingClassifier
+from scipy.special import comb
 
 def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path):
     messenger.send_update(dataset_id, {"status": "validating_model", "percent": 0.85, "best_model": [str(current_best_model[0]), current_best_model[1]]})
