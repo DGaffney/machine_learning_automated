@@ -80,6 +80,7 @@ if current_best_model == [None, -10000000.0]:
             diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
         i += 1
 
+current_best_model = [None, -10000000.0]
 for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 10)[0]):
     model_count += 2
     for i in range(run_count):
