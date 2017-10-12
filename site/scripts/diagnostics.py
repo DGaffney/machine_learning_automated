@@ -132,7 +132,21 @@ def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filena
     final_model = current_best_model[0]
     final_model.fit(x, y)
     joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
-    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": current_best_model[0].get_params(), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
+    model_params = {}
+    if current_best_model[0].__class__.__name__ == "VotingClassifier":
+        model_params = current_best_model[0].get_params()
+        model_params["estimators"] = {}
+        for mmn,mm in current_best_model[0].get_params()["estimators"]:
+            model_params["estimators"][mmn] = mm.get_params()
+        for key in model_params.keys():
+            try:
+                gz = json.dumps(model_params[key])
+            except:
+                model_params[key] = str(model_params[key])
+    except:
+        model_params = current_best_model[0].get_params()
+        current_best_model[0].get_params()
+    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": json.dumps(model_params), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
 
 def total_combos_possible(best_performing_models):
     total_counts = []
