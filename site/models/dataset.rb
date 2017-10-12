@@ -213,6 +213,7 @@ class Dataset
     "RidgeCV" => "https://en.wikipedia.org/wiki/Tikhonov_regularization",
     "SGDClassifier" => "https://en.wikipedia.org/wiki/Gradient_descent",
     "SVC" => "https://en.wikipedia.org/wiki/Support_vector_machine",
+    "VotingClassifier" => "https://en.wikipedia.org/wiki/Ensemble_learning",
     "SVR" => "https://en.wikipedia.org/wiki/Support_vector_machine"}
   end
   
