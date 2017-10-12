@@ -87,7 +87,7 @@ current_best_model = [None, -10000000.0]
 scores = []
 best_performing_models = []
 for model in models:
-    current_best_model = try_model(model)
+    current_best_model = try_model(model, current_best_model)
     i += 1
 
 if current_best_model == [None, -10000000.0]:
@@ -98,7 +98,7 @@ if current_best_model == [None, -10000000.0]:
     i = 1
     current_best_model = [None, -10000000.0]
     for model in models:
-        current_best_model = try_model(model)
+        current_best_model = try_model(model, current_best_model)
         i += 1
 
 if len(best_performing_models) > 1:
@@ -106,6 +106,6 @@ if len(best_performing_models) > 1:
         model_count += 2
         for i in range(int(run_count)):
             models = list(diagnostics.random_combination(best_performing_models, model_count))
-            current_best_model = try_ensemble_model(models)
+            current_best_model = try_ensemble_model(models, current_best_model)
 
 diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
