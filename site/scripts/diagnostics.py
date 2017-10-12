@@ -132,6 +132,43 @@ def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filena
     joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
     print json.dumps({"model_found": "true", "label_type": label_type, "model_params": current_best_model[0].get_params(), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
 
+def total_combos_possible(best_performing_models):
+    total_counts = []
+    for i in range(len(best_performing_models))[1:]:
+        total_counts.append(comb(len(best_performing_models), i+1, exact=False))
+    return total_counts
+
+def get_run_counts_by_size(best_performing_models, run_count):
+    probs = [1.0/((i**1.8+1)) for i,el in enumerate(best_performing_models)][1:]
+    prob_sum = sum(probs)
+    allocated = np.random.multinomial(run_count, [p/prob_sum for p in probs], size=1).tolist()[0]
+    total_possible = total_combos_possible(best_performing_models)
+    total_set = 0
+    to_run = []
+    new_probs = []
+    for i,val in enumerate(total_possible):
+        if allocated[i] > val:
+            total_set += val
+            to_run.append(val)
+            new_probs.append(0.0)
+        else:
+            total_set += allocated[i]
+            to_run.append(allocated[i])
+            new_probs.append(probs[i])
+    new_prob_sum = sum(new_probs)
+    if new_prob_sum > 0:
+        new_probs = [el/new_prob_sum for el in new_probs]
+        for i,val in enumerate(np.random.multinomial(run_count-total_set, new_probs, size=1).tolist()[0]):
+            to_run[i] += val
+    return to_run, sum(total_possible)
+
+def random_combination(iterable, r):
+    "Random selection from itertools.combinations(iterable, r)"
+    pool = tuple(iterable)
+    n = len(pool)
+    indices = sorted(random.sample(xrange(n), r))
+    return tuple(pool[i] for i in indices)
+
 
 #visualizer = Rank2D(features=x, algorithm='pearson')
 #visualizer.fit(x, y)
