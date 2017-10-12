@@ -25,7 +25,6 @@ from yellowbrick.features.rankd import Rank1D, Rank2D
 from sklearn.model_selection import train_test_split
 from yellowbrick.features.pca import PCADecomposition
 import json
-from sklearn.ensemble import VotingClassifier
 from scipy.special import comb
 import random
 
