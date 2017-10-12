@@ -82,6 +82,8 @@ if current_best_model == [None, -10000000.0]:
 
 for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 10)[0]):
     model_count += 2
+    print "Testing Ensemble Methods"
+    print model_count
     for i in range(run_count):
         models = list(diagnostics.random_combination(best_performing_models, model_count))
         try:
