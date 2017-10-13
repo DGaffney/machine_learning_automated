@@ -49,14 +49,14 @@ def try_model(model, current_best_model):
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": ((i/float(len(models)))*0.75), "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     clf = GridSearchCV(model_info.models()[model](), model_info.hyperparameters()[model], cv=5)
     scores = []
-    try:
-        results= clf.fit(x, y)
-    except:
-        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": (i/float(len(models)))*0.75})
+    # try:
+    #     results= clf.fit(x, y)
+    # except:
+    messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": (i/float(len(models)))*0.75})
     try:
         best_model = results.best_estimator_
         scores = cross_val_score(best_model, x, y, cv=10, scoring=score_type)
-    except:
+    except ValueError:
         messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
     if len(scores) != 0:
         if np.abs(current_best_model[-1] - np.mean(scores)) < 0.05 or current_best_model[0] == None:
@@ -71,12 +71,12 @@ def try_ensemble_model(models, current_best_model):
     try:
         model = VotingClassifier([(str(el), el) for el in models], voting="soft")
         scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-    except:
-        try:
-            model = VotingClassifier([(str(el), el) for el in models])
-            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-        except:
-            return current_best_model
+    except AttributeError:
+#        try:
+        model = VotingClassifier([(str(el), el) for el in models])
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+#        except:
+#            return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
