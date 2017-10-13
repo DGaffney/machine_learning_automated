@@ -47,11 +47,11 @@ if label_type == "Ordinal":
 #@timeout_decorator.timeout(120)#@timeout(120)
 def try_model(model, current_best_model):
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
-#    scores = []
-#    try:
-    scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-#    except:
-#        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
+    scores = []
+    try:
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    except ValueError:
+        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
     if np.abs(current_best_model[-1] - np.mean(scores)) < 0.05 or current_best_model[0] == None:
         best_performing_models.append(model)
     if current_best_model[-1] < np.mean(scores):
