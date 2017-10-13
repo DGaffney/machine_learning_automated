@@ -68,7 +68,7 @@ def read_csv(filename):
 def cast_csv_given_manifest(rows, manifest):
     casted_dataset = []
     for row in rows:
-        if set(row) != [""]:
+        if list(set(row)) != [""]:
             print row
             casted_row = []
             for i,val in enumerate(row):
