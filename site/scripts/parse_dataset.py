@@ -68,10 +68,12 @@ def read_csv(filename):
 def cast_csv_given_manifest(rows, manifest):
     casted_dataset = []
     for row in rows:
-        casted_row = []
-        for i,val in enumerate(row):
-            casted_row.append(cast_val(val, manifest['col_classes'][i]))
-        casted_dataset.append(casted_row)
+        if set(row) != [""]:
+            print row
+            casted_row = []
+            for i,val in enumerate(row):
+                casted_row.append(cast_val(val, manifest['col_classes'][i]))
+            casted_dataset.append(casted_row)
     return casted_dataset
 
 def cast_val(value, directive):
