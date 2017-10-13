@@ -139,10 +139,10 @@ def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filena
         for mmn,mm in current_best_model[0].get_params()["estimators"]:
             model_params["estimators"][mmn] = mm.get_params()
         for key in model_params.keys():
-            try:
-                gz = json.dumps(model_params[key])
-            except:
-                model_params[key] = str(model_params[key])
+            # try:
+            #     gz = json.dumps(model_params[key])
+            # except:
+            model_params[key] = str(model_params[key])
     else:
         model_params = current_best_model[0].get_params()
         current_best_model[0].get_params()
