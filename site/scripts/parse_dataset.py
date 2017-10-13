@@ -111,7 +111,6 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     labels = []
     conversion_pipeline = {}
     for i,col in enumerate(transposed):
-        print i
         if i == int(manifest['prediction_column']):
             if type(col[0]) == type([]) or type(col[0]) == type(()):
                 labels = [str.join(" ", el) for el in col]
@@ -156,8 +155,11 @@ def convert_text_fields_to_data(casted_dataset, manifest):
             conversion_pipeline[i] = {"average": average, "min": minval, "max": maxval, "stdev": stdev}
             replaced = list(replaceiniter(col, lambda x: x==None, average))
             detexted.append(replaced)
-            detexted.append(((np.array(replaced)-minval)/(maxval-minval)).tolist())
-            detexted.append(((np.array(replaced)-average)/(stdev)).tolist())
+            dist = maxval-minval
+            if dist > 0:
+                detexted.append(((np.array(replaced)-minval)/(dist)).tolist())
+            if stdev > 0:
+                detexted.append(((np.array(replaced)-average)/(stdev)).tolist())
             detexted.append(np.abs(replaced))
     cleared_labels = []
     cleared_dataset = []
