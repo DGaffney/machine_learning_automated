@@ -52,6 +52,8 @@ def try_model(model, current_best_model):
         scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
     except ValueError:
         messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
+    except TypeError:
+        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
     if np.abs(current_best_model[-1] - np.mean(scores)) < 0.05 or current_best_model[0] == None:
         best_performing_models.append(model)
     if current_best_model[-1] < np.mean(scores):
