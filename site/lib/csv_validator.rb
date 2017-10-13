@@ -12,7 +12,7 @@ class CSVValidator
   end
 
   def validate
-    return "Must be < 10mb in order to be analyzed - larger files coming in the future" if filesize_mb > 10
+    return "Must be < 50mb in order to be analyzed - larger files coming in the future" if filesize_mb > 50
     transposable = self.csv_data.transpose rescue nil ; false
     return "Must be an even CSV with same number of columns for each row!" if transposable.nil?
     cols = []
