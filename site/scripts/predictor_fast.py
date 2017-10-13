@@ -18,7 +18,9 @@ from sklearn.model_selection import cross_val_score
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
-from timeout import timeout
+#from timeout import timeout
+import time
+import timeout_decorator
 storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small.csv"
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
@@ -42,7 +44,7 @@ if label_type == "Ordinal":
     models = model_info.fast_ordinal_models()
     score_type = "r2"
 
-@timeout(120)
+@timeout_decorator.timeout(5)#@timeout(120)
 def try_model(model, current_best_model):
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": (i/float(len(models)))*0.75, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     scores = []
@@ -57,7 +59,7 @@ def try_model(model, current_best_model):
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
     return current_best_model
 
-@timeout(120)
+@timeout_decorator.timeout(5)#@timeout(120)
 def try_ensemble_model(models, current_best_model):
     try:
         model = VotingClassifier([(str(el), el) for el in models], voting="soft")
@@ -77,7 +79,7 @@ i = 1
 current_best_model = [None, -10000000.0]
 best_performing_models = []
 
-@timeout(10)
+@timeout_decorator.timeout(5)#@timeout(10)
 def run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path):
     for model in models:
         current_best_model = try_model(model, current_best_model)
