@@ -102,3 +102,5 @@ def run():
                 current_best_model = try_ensemble_model(models, current_best_model)
 
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+
+run()
