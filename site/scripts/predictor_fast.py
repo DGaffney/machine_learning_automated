@@ -78,7 +78,7 @@ current_best_model = [None, -10000000.0]
 best_performing_models = []
 
 @timeout(10)
-def run():
+def run(models, current_best_model, best_performing_model, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path):
     for model in models:
         current_best_model = try_model(model, current_best_model)
         i += 1
@@ -103,4 +103,4 @@ def run():
 
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
 
-run()
+run(models, current_best_model, best_performing_model, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
