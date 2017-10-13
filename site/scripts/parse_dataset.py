@@ -69,7 +69,6 @@ def cast_csv_given_manifest(rows, manifest):
     casted_dataset = []
     for row in rows:
         if list(set(row)) != [""]:
-            print row
             casted_row = []
             for i,val in enumerate(row):
                 casted_row.append(cast_val(val, manifest['col_classes'][i]))
