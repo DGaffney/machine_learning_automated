@@ -59,7 +59,7 @@ def try_model(model, current_best_model):
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
     return current_best_model
 
-@timeout_decorator.timeout(120)#@timeout(120)
+@timeout_decorator.timeout(1200)#@timeout(120)
 def try_ensemble_model(models, current_best_model):
 #    try:
     model = VotingClassifier([(str(el), el) for el in models], voting="soft")
