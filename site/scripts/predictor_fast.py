@@ -61,13 +61,13 @@ def try_model(model, current_best_model):
 
 #@timeout_decorator.timeout(120)#@timeout(120)
 def try_ensemble_model(models, current_best_model):
-#    try:
-    model = VotingClassifier([(str(el), el) for el in models], voting="soft")
-    scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-#    except:
+    try:
+        model = VotingClassifier([(str(el), el) for el in models], voting="soft")
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    except AttributeError:
 #        try:
-#            model = VotingClassifier([(str(el), el) for el in models])
-#            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+        model = VotingClassifier([(str(el), el) for el in models])
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
 #        except:
 #            return current_best_model
     if current_best_model[-1] < np.mean(scores):
