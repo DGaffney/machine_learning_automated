@@ -17,7 +17,7 @@ import string
 def label_type(y, y_type):
     if len(set(y)) == 2 and y_type in ["Categorical", "Float", "Integer"]:
         return "Binary"
-    elif len(set(y)) <= 15 and y_type in ["Categorical", "Integer", "Phrase"]:
+    elif float(len(set(y)))/float(len(y)) < 0.05 and y_type in ["Categorical", "Integer", "Phrase"]:
         return "Categorical"
     else:
         return "Ordinal"
