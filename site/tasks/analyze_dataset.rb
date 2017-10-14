@@ -39,8 +39,8 @@ class AnalyzeDataset
       end
     end
     if @dataset.prediction_speed == 0
-      puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
-      IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}") do |io|
+      puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}"
+      IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}") do |io|
         io.each_line do |line|
           puts line
           current_statement = JSON.parse(line.strip) rescue nil

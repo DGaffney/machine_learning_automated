@@ -25,6 +25,7 @@ storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small.csv"
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
 stated_input_column = sys.argv[3]
+prev_acc = float(sys.argv[4])
 dataset_id = dataset_filename.split("/")[-1].split("_")[0]
 diagnostic_image_path = storage_location+"/public/images/"+dataset_id+"/"
 try:
@@ -47,7 +48,7 @@ if label_type == "Ordinal":
 
 model_run_count = float(len(models)+ensemble_model_count)
 i = 1
-current_best_model = [None, -10000000.0]
+current_best_model = [None, prev_acc]
 scores = []
 best_performing_models = []
 
@@ -100,13 +101,13 @@ def try_ensemble_model(models, current_best_model, i):
 for model in models:
     current_best_model = try_model(model, current_best_model, i)
 
-if current_best_model == [None, -10000000.0]:
+if current_best_model == [None, prev_acc]:
     best_performing_models = []
     label_type = "Categorical"
     score_type = "accuracy"
     models = model_info.model_list()
     i = 1
-    current_best_model = [None, -10000000.0]
+    current_best_model = [None, prev_acc]
     for model in models:
         current_best_model = try_model(model, current_best_model, i)
 
