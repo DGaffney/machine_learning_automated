@@ -17,9 +17,27 @@ class Dataset
   key :csv_preview_row, Array
   timestamps!
 
-  def self.full_csv_test(csv_data)
-    @csv = CSVValidator.new(csv_data, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
+  def self.full_csv_test(filepath)
+    csv_data = CSV.read(filepath)
+    0.upto(csv_data.first.count).to_a.each do |prediction_column|
+      @csv = CSVValidator.new(csv_data, filepath.split("/").last, `ls -l #{filepath}`.split(" ")[4].to_i/1024.0/1024)
+      results = @csv.validate
+      @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
+      @d.prediction_accuracy = "0"
+      @d.prediction_speed = "0"
+      @d.prediction_column = prediction_column.to_s
+      prediction_example = []
+      @d.csv_data.shuffle.first.each_with_index do |el, i|
+        prediction_example << el if i != @d.prediction_column
+      end
+      @d.csv_preview_row = prediction_example
+      @d.save!
+      @d.save!
+      @d.set_update({"status" => "queued"})
+      AnalyzeDataset.perform_async(@d.id)
+    end
   end
+
   def self.refresh_problem_dataset(dataset_id)
     csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"problem_csv_data/"+dataset_id+".gzip")))
     manifest = JSON.parse(File.read(SETTINGS["storage_location"]+"problem_datasets/"+dataset_id))
