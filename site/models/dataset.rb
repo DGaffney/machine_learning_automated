@@ -19,13 +19,13 @@ class Dataset
 
   def self.full_csv_test(filepath)
     csv_data = CSV.read(filepath)
-    0.upto(csv_data.first.count).to_a.each do |prediction_column|
-      @csv = CSVValidator.new(csv_data, filepath.split("/").last, `ls -l #{filepath}`.split(" ")[4].to_i/1024.0/1024)
+    0.upto(csv_data.first.count).to_a.shuffle.first(100).each do |prediction_column|
+      @csv = CSVValidator.new(csv_data, filepath.split("/").last.gsub(" ", "_"), `ls -l "#{filepath}"`.split(" ")[4].to_i/1024.0/1024)
       results = @csv.validate
       @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
       @d.prediction_accuracy = "0"
       @d.prediction_speed = "0"
-      @d.prediction_column = prediction_column.to_s
+      @d.prediction_column = prediction_column.to_i
       prediction_example = []
       @d.csv_data.shuffle.first.each_with_index do |el, i|
         prediction_example << el if i != @d.prediction_column
