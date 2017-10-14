@@ -50,6 +50,10 @@ if label_type == "Ordinal":
     score_type = "r2"
 
 model_run_count = float(len(models)+ensemble_model_count)
+i = 1
+current_best_model = [None, -10000000.0]
+best_performing_models = []
+
 #@timeout_decorator.timeout(120)#@timeout(120)
 def try_model(model, current_best_model):
     percent = (i/model_run_count)*run_multiplier
@@ -86,10 +90,6 @@ def try_ensemble_model(models, current_best_model):
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
     i += 1
     return current_best_model
-
-i = 1
-current_best_model = [None, -10000000.0]
-best_performing_models = []
 
 @timeout_decorator.timeout(2400)#@timeout(10)
 def run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path):
