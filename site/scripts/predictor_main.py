@@ -46,6 +46,11 @@ if label_type == "Ordinal":
     score_type = "r2"
 
 model_run_count = float(len(models)+ensemble_model_count)
+i = 1
+current_best_model = [None, -10000000.0]
+scores = []
+best_performing_models = []
+
 @timeout(2400)
 def try_model(model, current_best_model):
     percent = 0.5 + (i/model_run_count)*0.5
@@ -90,10 +95,6 @@ def try_ensemble_model(models, current_best_model):
     return current_best_model
     
 
-i = 1
-current_best_model = [None, -10000000.0]
-scores = []
-best_performing_models = []
 for model in models:
     current_best_model = try_model(model, current_best_model)
 
