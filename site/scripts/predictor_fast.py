@@ -107,8 +107,8 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
     if len(best_performing_models) > 1:
         for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, ensemble_model_count)[0]):
             model_count += 2
-            for i in range(run_count):
-                models = list(diagnostics.random_combination(best_performing_models, ensemble_model_count))
+            for ik in range(run_count):
+                models = list(diagnostics.random_combination(best_performing_models, model_count))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0)
 

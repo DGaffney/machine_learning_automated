@@ -110,7 +110,7 @@ if current_best_model == [None, -10000000.0]:
 if len(best_performing_models) > 1:
     for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 50)[0]):
         model_count += 2
-        for i in range(int(run_count)):
+        for ik in range(int(run_count)):
             models = list(diagnostics.random_combination(best_performing_models, model_count))
             current_best_model = try_ensemble_model(models, current_best_model)
 
