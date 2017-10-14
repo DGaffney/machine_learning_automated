@@ -49,15 +49,15 @@ post "/datasets/:user_id/:dataset_id" do
   redirect "/" if current_user.nil?
   @dataset = Dataset.find(params["dataset_id"])
   redirect "/profile" if @dataset.nil?
+  params.select{|k,v| k.include?("header_class_")}.collect{|k,v| [k.gsub("header_class_", "").to_i, v]}.each do |row_num, classtype|
+    @dataset.col_classes[row_num] = classtype if @dataset.col_classes[row_num] != classtype
+  end;false
   uniq_counts = @dataset.csv_data.transpose[params["prediction_column"].to_i].counts
   if ["Phrase", "Categorical", "Text"].include?(@dataset.col_classes[params["prediction_column"].to_i]) && uniq_counts.values.include?(1)
     @dataset.wind_down
     flash[:error] = "The column you selected is a textual column that has completely unique values (e.g. there's only one observation with the \"#{uniq_counts.select{|k,v| v == 1}.keys.first}\" value for the target column) - please add more rows with those values or remove them from the CSV to continue. "
     redirect "/profile"
   end
-  params.select{|k,v| k.include?("header_class_")}.collect{|k,v| [k.gsub("header_class_", "").to_i, v]}.each do |row_num, classtype|
-    @dataset.col_classes[row_num] = classtype if @dataset.col_classes[row_num] != classtype
-  end;false
   @dataset.prediction_accuracy = params["prediction_accuracy"]
   @dataset.prediction_speed = params["prediction_speed"]
   @dataset.prediction_column = params["prediction_column"]
