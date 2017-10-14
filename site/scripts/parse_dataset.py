@@ -83,7 +83,10 @@ def cast_val(value, directive):
         elif value.lower() == "true":
             return 1
         else:
-            return int(value)
+            try:
+                return int(value)
+            except ValueError:
+                return None
     elif directive == "Float":
         return float(re.sub("[^0-9\.\-]", "", value))
     elif directive == "Time":
