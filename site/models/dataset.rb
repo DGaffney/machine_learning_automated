@@ -65,7 +65,7 @@ class Dataset
         User.find(self.user_id).email, 
         "Dataset #{self.filename} failed", 
         "Hey,<br/>
-        Unfortunately, the dataset that you submitted (\"#{self.filename}\" with target of #{self.headers[self.prediction_column]}) didn't pass muster for the machine learners.
+        Unfortunately, the dataset that you submitted (\"#{self.filename}\" with target of #{self.headers[self.prediction_column.to_i]} (#{self.prediction_column})) didn't pass muster for the machine learners.
         Typically this happens when the dataset has many complicated data types, mixes data types in a single column,
         or has missing data in the CSV. Please double check the data for these erorrs and resubmit when you think you've cleaned it up.
         ")
