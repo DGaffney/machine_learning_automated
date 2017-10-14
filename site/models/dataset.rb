@@ -17,6 +17,9 @@ class Dataset
   key :csv_preview_row, Array
   timestamps!
 
+  def self.full_csv_test(csv_data)
+    @csv = CSVValidator.new(csv_data, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
+  end
   def self.refresh_problem_dataset(dataset_id)
     csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"problem_csv_data/"+dataset_id+".gzip")))
     manifest = JSON.parse(File.read(SETTINGS["storage_location"]+"problem_datasets/"+dataset_id))

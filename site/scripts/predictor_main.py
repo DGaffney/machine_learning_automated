@@ -85,6 +85,8 @@ def try_ensemble_model(models, current_best_model, i):
     try:
         model = VotingClassifier([(str(el), el) for el in models], voting="soft")
         scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    except ValueError:
+        return current_best_model
     except AttributeError:
 #        try:
         model = VotingClassifier([(str(el), el) for el in models])
