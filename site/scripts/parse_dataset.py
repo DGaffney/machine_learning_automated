@@ -117,6 +117,9 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 labels = [str.join(" ", el) for el in col]
             else:
                 labels = col
+            if manifest["col_classes"][manifest["prediction_column"]] in ["Categorical", "Phrase", "Text"]:
+                conversion_pipeline["label"] = list(set(col))
+                labels = [conversion_pipeline["label"].index(c) for c in col]
         elif manifest['col_classes'][i] == "Phrase" or manifest['col_classes'][i] == "Text":
             #future feature is to do word-after-word approach vis-a-vis RNNs/CNNs instead of simple counts
             tf = TfidfVectorizer(analyzer='word', ngram_range=(1,1), min_df = 0, stop_words = 'english')
