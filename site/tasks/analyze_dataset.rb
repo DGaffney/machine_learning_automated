@@ -38,7 +38,7 @@ class AnalyzeDataset
         end
       end
     end
-    if @dataset.prediction_speed == 2
+    if @dataset.prediction_speed == 0
       puts "python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}"
       IO.popen("python scripts/#{script}.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]}") do |io|
         io.each_line do |line|

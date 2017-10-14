@@ -49,7 +49,10 @@ def try_model(model, current_best_model):
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": ((i/float(len(models)))*0.75), "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     clf = GridSearchCV(model_info.models()[model](), model_info.hyperparameters()[model], cv=5)
     scores = []
-    results= clf.fit(x, y)
+    try:
+        results= clf.fit(x, y)
+    except ValueError:
+        return current_best_model
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": (i/float(len(models)))*0.75})
     try:
         best_model = results.best_estimator_
