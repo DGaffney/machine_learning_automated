@@ -55,7 +55,7 @@ current_best_model = [None, -10000000.0]
 best_performing_models = []
 
 #@timeout_decorator.timeout(120)#@timeout(120)
-def try_model(model, current_best_model):
+def try_model(model, current_best_model, i):
     percent = (i/model_run_count)*run_multiplier
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": percent, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     scores = []
@@ -74,7 +74,7 @@ def try_model(model, current_best_model):
     return current_best_model
 
 #@timeout_decorator.timeout(120)#@timeout(120)
-def try_ensemble_model(models, current_best_model):
+def try_ensemble_model(models, current_best_model, i):
     percent = (i/model_run_count)*run_multiplier
     try:
         model = VotingClassifier([(str(el), el) for el in models], voting="soft")
@@ -92,9 +92,9 @@ def try_ensemble_model(models, current_best_model):
     return current_best_model
 
 @timeout_decorator.timeout(2400)#@timeout(10)
-def run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path):
+def run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path, i):
     for model in models:
-        current_best_model = try_model(model, current_best_model)
+        current_best_model = try_model(model, current_best_model, i)
     if current_best_model == [None, -10000000.0]:
         best_performing_models = []
         label_type = "Categorical"
@@ -103,13 +103,13 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
         i = 1
         current_best_model = [None, -10000000.0]
         for model in models:
-            current_best_model = try_model(model, current_best_model)
+            current_best_model = try_model(model, current_best_model, i)
     if len(best_performing_models) > 1:
         for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, ensemble_model_count)[0]):
             model_count += 2
             for i in range(run_count):
                 models = list(diagnostics.random_combination(best_performing_models, ensemble_model_count))
-                current_best_model = try_ensemble_model(models, current_best_model)
+                current_best_model = try_ensemble_model(models, current_best_model, i)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0)
 
-run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
+run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path, i)
