@@ -28,8 +28,8 @@ import json
 from scipy.special import comb
 import random
 
-def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path):
-    messenger.send_update(dataset_id, {"status": "validating_model", "percent": 0.85, "best_model": [str(current_best_model[0]), current_best_model[1]]})
+def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path, percent_complete):
+    messenger.send_update(dataset_id, {"status": "validating_model", "percent": percent_complete, "best_model": [str(current_best_model[0]), current_best_model[1]]})
     if label_type == "Binary":
         return generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
     elif label_type == "Categorical":
@@ -132,7 +132,7 @@ def generate_categorical_diagnostics(x, y, current_best_model, label_type, diagn
     return generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
 
 
-def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path):
+def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent):
     final_model = current_best_model[0]
     final_model.fit(x, y)
     joblib.dump(final_model, storage_location+'ml_models/'+dataset_id+".pkl")
@@ -150,7 +150,7 @@ def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filena
     else:
         model_params = current_best_model[0].get_params()
         current_best_model[0].get_params()
-    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": json.dumps(model_params), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path)})
+    print json.dumps({"model_found": "true", "label_type": label_type, "model_params": json.dumps(model_params), "model_name": current_best_model[0].__class__.__name__, "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "model_path": storage_location+'ml_models/'+dataset_id+".pkl", "status": "complete", "conversion_pipeline": conversion_pipeline, "presumed_label_type": label_type, "best_model": [str(current_best_model[0]), current_best_model[1]], "diagnostic_results": generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path, percent)})
 
 def total_combos_possible(best_performing_models):
     total_counts = []

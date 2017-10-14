@@ -35,6 +35,7 @@ messenger.send_update(dataset_id, {"status": "loading_dataset"})
 parsed_dataset, manifest = parse_dataset.parse(dataset_filename, manifest_filename)
 x = parsed_dataset[0]
 y = parsed_dataset[1]
+ensemble_model_count = 10
 conversion_pipeline = parsed_dataset[2]
 messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "dataset_read"})
 models = model_info.model_list()
@@ -44,31 +45,35 @@ if label_type == "Ordinal":
     models = model_info.model_ordinal_list()
     score_type = "r2"
 
+model_run_count = float(len(models)+ensemble_model_count)
 @timeout(2400)
 def try_model(model, current_best_model):
-    messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": ((i/float(len(models)))*0.75), "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
+    percent = 0.5 + (i/model_run_count)*0.5
+    messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": percent, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
     clf = GridSearchCV(model_info.models()[model](), model_info.hyperparameters()[model], cv=5)
     scores = []
     try:
         results= clf.fit(x, y)
     except ValueError:
         return current_best_model
-    messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": (i/float(len(models)))*0.75})
+    messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": percent})
     try:
         best_model = results.best_estimator_
         scores = cross_val_score(best_model, x, y, cv=10, scoring=score_type)
     except ValueError:
-        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": (i/float(len(models)))*0.75})
+        messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": str(model), "percent": percent})
     if len(scores) != 0:
         if np.abs(current_best_model[-1] - np.mean(scores)) < 0.05 or current_best_model[0] == None:
             best_performing_models.append(best_model)
         if current_best_model[-1] < np.mean(scores):
             current_best_model = [best_model, np.mean(scores)]
-            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+    i += 1
     return current_best_model
 
 @timeout(2400)
 def try_ensemble_model(models, current_best_model):
+    percent = 0.5 + (i/model_run_count)*0.5
     try:
         model = VotingClassifier([(str(el), el) for el in models], voting="soft")
         scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
@@ -80,7 +85,8 @@ def try_ensemble_model(models, current_best_model):
 #            return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+    i += 1
     return current_best_model
     
 
@@ -90,7 +96,6 @@ scores = []
 best_performing_models = []
 for model in models:
     current_best_model = try_model(model, current_best_model)
-    i += 1
 
 if current_best_model == [None, -10000000.0]:
     best_performing_models = []
@@ -101,7 +106,6 @@ if current_best_model == [None, -10000000.0]:
     current_best_model = [None, -10000000.0]
     for model in models:
         current_best_model = try_model(model, current_best_model)
-        i += 1
 
 if len(best_performing_models) > 1:
     for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 50)[0]):
@@ -110,4 +114,4 @@ if len(best_performing_models) > 1:
             models = list(diagnostics.random_combination(best_performing_models, model_count))
             current_best_model = try_ensemble_model(models, current_best_model)
 
-diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path)
+diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
