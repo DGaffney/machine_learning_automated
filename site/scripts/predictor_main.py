@@ -61,6 +61,8 @@ def try_model(model, current_best_model, i):
         results= clf.fit(x, y)
     except ValueError:
         return current_best_model
+    except TypeError:
+        return current_best_model
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "status": "model_error", "model_error": "grid search error in "+str(model), "percent": percent})
     try:
         best_model = results.best_estimator_
