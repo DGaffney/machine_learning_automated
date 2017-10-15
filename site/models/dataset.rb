@@ -20,7 +20,6 @@ class Dataset
   def self.full_csv_test(filepath)
     csv_data = CSV.read(filepath)
     0.upto(csv_data.first.count-1).to_a.shuffle.first(100).each do |prediction_column|
-    puts prediction_column
       @csv = CSVValidator.new(csv_data, filepath.split("/").last.gsub(" ", "_"), `ls -l "#{filepath}"`.split(" ")[4].to_i/1024.0/1024);false
       results = @csv.validate
       @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
@@ -34,7 +33,6 @@ class Dataset
         prediction_example << el if i != @d.prediction_column
       end
       @d.csv_preview_row = prediction_example
-      @d.save!
       @d.save!
       @d.set_update({"status" => "queued"})
       TestAnalyzeDataset.perform_async(@d.id)
