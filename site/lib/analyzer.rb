@@ -34,7 +34,6 @@ module Analyzer
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
         else
-          binding.pry
           DatasetError.write_new_error_dataset(@dataset, current_statement, "predictor_fast.py")
         end
       end

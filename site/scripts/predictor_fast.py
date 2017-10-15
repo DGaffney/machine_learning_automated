@@ -78,16 +78,14 @@ def try_model(model, current_best_model, i):
 def try_ensemble_model(models, current_best_model, i):
     percent = (i/model_run_count)*run_multiplier
     try:
-        model = VotingClassifier([(str(el), el) for el in models], voting="soft")
-        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-    except AttributeError:
-        model = VotingClassifier([(str(el), el) for el in models])
-        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+        try:
+            model = VotingClassifier([(str(el), el) for el in models], voting="soft")
+            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+        except AttributeError:
+            model = VotingClassifier([(str(el), el) for el in models])
+            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
     except ValueError:
         return current_best_model
-#        try:
-#        except:
-#            return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
