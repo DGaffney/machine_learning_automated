@@ -114,4 +114,9 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
                 current_best_model = try_ensemble_model(models, current_best_model, i)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0)
 
-run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
+try:
+    butts
+    run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
+except:
+    e = sys.exc_info()[0]
+    print json.dumps({"error": e})

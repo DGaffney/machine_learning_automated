@@ -41,7 +41,6 @@ module Analyzer
       if !$?.success?
         puts "ERROR ERROR ERROR ERROR"
         puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
-        binding.pry
       end
     end
     if @dataset.prediction_speed == 0
