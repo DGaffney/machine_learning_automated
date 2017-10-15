@@ -20,9 +20,11 @@ class Dataset
   def self.full_csv_test(filepath)
     csv_data = CSV.read(filepath)
     0.upto(csv_data.first.count).to_a.shuffle.first(100).each do |prediction_column|
-      @csv = CSVValidator.new(csv_data, filepath.split("/").last.gsub(" ", "_"), `ls -l "#{filepath}"`.split(" ")[4].to_i/1024.0/1024)
+      @csv = CSVValidator.new(csv_data, filepath.split("/").last.gsub(" ", "_"), `ls -l "#{filepath}"`.split(" ")[4].to_i/1024.0/1024);false
       results = @csv.validate
       @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
+      uniq_counts = @d.csv_data.transpose[prediction_column.to_i].counts
+      next if ["Phrase", "Categorical", "Text"].include?(@d.col_classes[prediction_column.to_i]) && uniq_counts.values.include?(1)
       @d.prediction_accuracy = "0"
       @d.prediction_speed = "0"
       @d.prediction_column = prediction_column.to_i
