@@ -16,10 +16,11 @@ class Dataset
   key :feature_count, Integer
   key :csv_preview_row, Array
   timestamps!
-
+  #`ls datasets`.split("\n").shuffle.collect{|x| Dataset.full_csv_test("datasets/#{x}")}
   def self.full_csv_test(filepath)
     csv_data = CSV.read(filepath)
-    0.upto(csv_data.first.count).to_a.shuffle.first(100).each do |prediction_column|
+    0.upto(csv_data.first.count-1).to_a.shuffle.first(100).each do |prediction_column|
+    puts prediction_column
       @csv = CSVValidator.new(csv_data, filepath.split("/").last.gsub(" ", "_"), `ls -l "#{filepath}"`.split(" ")[4].to_i/1024.0/1024);false
       results = @csv.validate
       @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
