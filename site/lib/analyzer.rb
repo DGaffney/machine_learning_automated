@@ -34,9 +34,14 @@ module Analyzer
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
         else
-        binding.pry
 #        DatasetError.new(dataset: @dataset, script_ran: "predictor_fast.py")
         end
+      end
+      io.close
+      if !$?.success?
+        puts "ERROR ERROR ERROR ERROR"
+        puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
+        binding.pry
       end
     end
     if @dataset.prediction_speed == 0
