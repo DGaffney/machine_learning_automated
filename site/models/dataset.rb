@@ -36,7 +36,7 @@ class Dataset
       @d.save!
       @d.save!
       @d.set_update({"status" => "queued"})
-      AnalyzeDataset.perform_async(@d.id)
+      TestAnalyzeDataset.perform_async(@d.id)
     end
   end
 
