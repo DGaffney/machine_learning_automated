@@ -24,6 +24,7 @@ class DatasetError
     dataset_attrs.delete("_id");false
     @de = DatasetError.new(dataset_attrs);false
     @de.script_ran = script_ran;false
+    binding.pry
     @de.script_response = error_message;false
     f = File.open(SETTINGS["storage_location"]+"/csv_data_error/"+@de.id.to_s+".gzip", "w");false
     f.write(Zlib::Deflate.deflate(dataset.csv_data.collect{|r| CSV.generate{|csv| csv << r}}.join("")));false
