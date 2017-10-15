@@ -35,6 +35,9 @@ class AnalyzeDataset
           @dataset.reload
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
+        else
+        binding.pry
+#        DatasetError.new(dataset: @dataset, script_ran: "predictor_fast.py")
         end
       end
     end
