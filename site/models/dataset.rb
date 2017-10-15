@@ -86,7 +86,7 @@ class Dataset
   end
 
   def tipped_over?
-    self.results && self.results.empty? && self.current_status == "complete"
+    self.results && self.results.empty? && self.results["error"].nil? && self.results["error"] != true && self.current_status == "complete"
   end
 
   def continuous_measurement_human_language
