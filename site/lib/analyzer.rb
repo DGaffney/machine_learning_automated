@@ -1,6 +1,6 @@
 module Analyzer
-  def perform(dataset_id)
-    @dataset = Dataset.find(dataset_id)
+  def perform(dataset_id, dataset_model="Dataset")
+    @dataset = dataset_model.constantize.find(dataset_id)
     @dataset.current_status = "analyzing"
     @dataset.save!
     filename = "tmp/"+dataset_id.to_s+"_"+Time.now.to_i.to_s+"_"+@dataset.filename
@@ -15,14 +15,12 @@ module Analyzer
     script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_main"
     current_statement = {}
     statements = []
-    lines = []
     puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
     IO.popen("python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}") do |io|
       io.each_line do |line|
         puts line
         current_statement = JSON.parse(line.strip) rescue nil
-        lines << line
-        if !current_statement.nil?
+        if !current_statement.nil? && current_statement["error"] != true
           statements << current_statement
           if current_statement["model_found"] == "true"
             @dataset.reload
@@ -36,14 +34,9 @@ module Analyzer
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
         else
-#        DatasetError.new(dataset: @dataset, script_ran: "predictor_fast.py")
+          binding.pry
+          DatasetError.write_new_error_dataset(@dataset, current_statement, "predictor_fast.py")
         end
-      end
-      io.close
-      if !$?.success?
-      binding.pry
-        puts "ERROR ERROR ERROR ERROR"
-        puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
       end
     end
     if @dataset.prediction_speed == 0

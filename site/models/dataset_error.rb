@@ -16,6 +16,23 @@ class DatasetError
   key :feature_count, Integer
   key :csv_preview_row, Array
   key :script_ran, String
-  key :script_response, String
+  key :script_response, Hash
   timestamps!
+  
+  def self.write_new_error_dataset(dataset, error_message, script_ran)
+    dataset_attrs = dataset.attributes;false
+    dataset_attrs.delete("_id");false
+    @de = DatasetError.new(dataset_attrs);false
+    @de.script_ran = script_ran;false
+    @de.script_response = error_message;false
+    f = File.open(SETTINGS["storage_location"]+"/csv_data_error/"+@de.id.to_s+".gzip", "w");false
+    f.write(Zlib::Deflate.deflate(dataset.csv_data.collect{|r| CSV.generate{|csv| csv << r}}.join("")));false
+    f.close;false
+    @de.save!
+    @de
+  end
+  
+  def csv_data
+    CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"/csv_data_error/"+self.id.to_s+".gzip")))
+  end
 end
