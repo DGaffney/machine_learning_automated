@@ -34,7 +34,6 @@ module Analyzer
           #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
           @dataset.save!
         else
-          binding.pry
           DatasetError.write_new_error_dataset(@dataset, current_statement, "predictor_fast.py")
         end
       end
@@ -45,7 +44,7 @@ module Analyzer
         io.each_line do |line|
           puts line
           current_statement = JSON.parse(line.strip) rescue nil
-          if !current_statement.nil?
+          if !current_statement.nil? && current_statement["error"] != true
             statements << current_statement
             if current_statement["model_found"] == "true"
               @dataset.reload
@@ -58,6 +57,8 @@ module Analyzer
             @dataset.reload
             #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
             @dataset.save!
+          else
+            DatasetError.write_new_error_dataset(@dataset, current_statement, "predictor_main.py")
           end
         end
       end
