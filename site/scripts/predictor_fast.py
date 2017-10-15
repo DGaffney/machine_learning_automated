@@ -21,6 +21,7 @@ from sklearn.ensemble import VotingClassifier
 #from timeout import timeout
 import time
 import timeout_decorator
+import traceback
 storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small.csv"
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
@@ -114,9 +115,9 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
                 current_best_model = try_ensemble_model(models, current_best_model, i)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0)
 
+error = None
 try:
-    butts
     run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
 except:
-    e = sys.exc_info()[0]
-    print json.dumps({"error": e})
+    error = sys.exc_info()
+    print json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])})

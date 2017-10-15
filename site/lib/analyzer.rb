@@ -15,11 +15,13 @@ module Analyzer
     script = @dataset.prediction_speed == 2 ? "predictor_fast" : "predictor_main"
     current_statement = {}
     statements = []
+    lines = []
     puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
     IO.popen("python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}") do |io|
       io.each_line do |line|
         puts line
         current_statement = JSON.parse(line.strip) rescue nil
+        lines << line
         if !current_statement.nil?
           statements << current_statement
           if current_statement["model_found"] == "true"
@@ -39,6 +41,7 @@ module Analyzer
       end
       io.close
       if !$?.success?
+      binding.pry
         puts "ERROR ERROR ERROR ERROR"
         puts "python scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed}"
       end

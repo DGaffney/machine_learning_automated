@@ -99,25 +99,26 @@ def try_ensemble_model(models, current_best_model, i):
     i += 1
     return current_best_model
     
-
-for model in models:
-    current_best_model = try_model(model, current_best_model, i)
-
-if current_best_model == [None, prev_acc]:
-    best_performing_models = []
-    label_type = "Categorical"
-    score_type = "accuracy"
-    models = model_info.model_list()
-    i = 1
-    current_best_model = [None, prev_acc]
+error = None
+try:
     for model in models:
         current_best_model = try_model(model, current_best_model, i)
-
-if len(best_performing_models) > 1:
-    for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 50)[0]):
-        model_count += 2
-        for ik in range(int(run_count)):
-            models = list(diagnostics.random_combination(best_performing_models, model_count))
-            current_best_model = try_ensemble_model(models, current_best_model, i)
-
-diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
+    if current_best_model == [None, prev_acc]:
+        best_performing_models = []
+        label_type = "Categorical"
+        score_type = "accuracy"
+        models = model_info.model_list()
+        i = 1
+        current_best_model = [None, prev_acc]
+        for model in models:
+            current_best_model = try_model(model, current_best_model, i)
+    if len(best_performing_models) > 1:
+        for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 50)[0]):
+            model_count += 2
+            for ik in range(int(run_count)):
+                models = list(diagnostics.random_combination(best_performing_models, model_count))
+                current_best_model = try_ensemble_model(models, current_best_model, i)
+    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
+except:
+    error = sys.exc_info()
+    print json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])})
