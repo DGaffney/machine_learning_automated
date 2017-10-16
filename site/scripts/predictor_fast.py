@@ -127,4 +127,4 @@ try:
     run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
 except:
     error = sys.exc_info()
-    print json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])})
+    print(json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])}))

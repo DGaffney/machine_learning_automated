@@ -122,4 +122,4 @@ try:
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
 except:
     error = sys.exc_info()
-    print json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])})
+    print(json.dumps({"error": True, "error_type": str(error[0]), "message": error[1].message, "traceback": traceback.extract_tb(error[2])}))

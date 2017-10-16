@@ -8,4 +8,4 @@ dataset_id = sys.argv[1]
 json_path = sys.argv[2]
 obs = json.loads(open(json_path).read())
 model = joblib.load(storage_location+"ml_models/"+dataset_id+".pkl") 
-print json.dumps(model.predict(obs).tolist())
+print(json.dumps(model.predict(obs).tolist()))
