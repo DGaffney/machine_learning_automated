@@ -36,6 +36,7 @@ try:
     os.mkdir(diagnostic_image_path)
 except: 
     pass
+
 messenger.send_update(dataset_id, {"status": "loading_dataset"})
 parsed_dataset, manifest = parse_dataset.parse(dataset_filename, manifest_filename)
 x = parsed_dataset[0]
