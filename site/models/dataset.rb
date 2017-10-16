@@ -24,7 +24,7 @@ class Dataset
       results = @csv.validate
       @d = Dataset.add_new_validated_csv(@csv, User.first(email: "itsme@devingaffney.com").id)
       uniq_counts = @d.csv_data.transpose[prediction_column.to_i].counts
-      next if ["Phrase", "Categorical", "Text"].include?(@d.col_classes[prediction_column.to_i]) && uniq_counts.values.include?(1)
+      next if uniq_counts.count == 1 || (["Phrase", "Categorical", "Text"].include?(@d.col_classes[prediction_column.to_i]) && uniq_counts.values.include?(1))
       @d.prediction_accuracy = "0"
       @d.prediction_speed = "0"
       @d.prediction_column = prediction_column.to_i

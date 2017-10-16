@@ -89,11 +89,11 @@ def try_ensemble_model(models, current_best_model, i):
     except ValueError:
         return current_best_model
     except AttributeError:
-#        try:
-        model = VotingClassifier([(str(el), el) for el in models])
-        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-#        except:
-#            return current_best_model
+        try:
+            model = VotingClassifier([(str(el), el) for el in models])
+            scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+        except ValueError:
+            return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
         diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
@@ -117,7 +117,7 @@ try:
         for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, 50)[0]):
             model_count += 2
             for ik in range(int(run_count)):
-                models = list(diagnostics.random_combination(best_performing_models, model_count))
+                models = list(diagnostics.random_combination(best_performing_models, int(model_count)))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
 except:
