@@ -31,7 +31,7 @@ run_multiplier = 0.5
 if run_speed == "2":
     run_multiplier = 1.0
 
-def rescale(data)
+def rescale(data):
     maxval = max(data)
     return [el/maxval for el in data]
 
