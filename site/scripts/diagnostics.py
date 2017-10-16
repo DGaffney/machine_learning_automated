@@ -84,7 +84,7 @@ def generate_binary_diagnostics(x, y, current_best_model, label_type, diagnostic
     conmat = {}
     if len(set(y)) == 2:
         tn, fp, fn, tp = confusion_matrix(*np.array(guesses).transpose()).ravel()
-        conmat = {"tn": tn, "tp": tp, "fn": fn, "fp": fp}
+        conmat = {"tn": int(tn), "tp": int(tp), "fn": int(fn), "fp": int(fp)}
     else:
         for val in list(set(y)):
             fp = len([el for el in guesses if el[0] == val and el[1] != val])
