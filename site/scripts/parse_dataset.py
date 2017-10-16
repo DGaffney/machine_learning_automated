@@ -77,30 +77,36 @@ def cast_csv_given_manifest(rows, manifest):
 
 def cast_val(value, directive):
     # try:
-    if directive == "Integer":
-        if value.lower() == "false":
-            return 0
-        elif value.lower() == "true":
-            return 1
-        else:
+        if directive == "Integer":
+            if value.lower() == "false":
+                return 0
+            elif value.lower() == "true":
+                return 1
+            else:
+                try:
+                    return int(value)
+                except ValueError:
+                    return None
+        elif directive == "Float":
             try:
-                return int(value)
+                return float(re.sub("[^0-9\.\-]", "", value))
             except ValueError:
-                return None
-    elif directive == "Float":
-        return float(re.sub("[^0-9\.\-]", "", value))
-    elif directive == "Time":
-        if len(value) == 10 and sum(c.isdigit() for c in value) == 10:
-            return int(time.mktime(datetime.datetime.fromtimestamp(int(value)).timetuple()))
-        elif len(value) == 13 and sum(c.isdigit() for c in value) == 13:
-            return int(time.mktime(datetime.datetime.fromtimestamp(int(value)/1000).timetuple()))
-        else:
-            return int(time.mktime(dateutilparse(value, fuzzy=True).timetuple()))
-    elif directive == "Text" or directive == "Phrase":
-        return [PorterStemmer().stem(word) for word in clean_str(value).split(" ")]
-    elif directive == "Categorical":
-        return value
+                return float(value)
+        elif directive == "Time":
+            if len(value) == 10 and sum(c.isdigit() for c in value) == 10:
+                return int(time.mktime(datetime.datetime.fromtimestamp(int(value)).timetuple()))
+            elif len(value) == 13 and sum(c.isdigit() for c in value) == 13:
+                return int(time.mktime(datetime.datetime.fromtimestamp(int(value)/1000).timetuple()))
+            else:
+                return int(time.mktime(dateutilparse(value, fuzzy=True).timetuple()))
+        elif directive == "Text" or directive == "Phrase":
+            return [PorterStemmer().stem(word) for word in clean_str(value).split(" ")]
+        elif directive == "Categorical":
+            return value
     # except:
+    #     print repr(value)
+    #     print directive
+    #     bads.append(value)
     #     return None
 
 
