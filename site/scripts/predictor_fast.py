@@ -30,6 +30,11 @@ run_speed = sys.argv[4]
 run_multiplier = 0.5
 if run_speed == "2":
     run_multiplier = 1.0
+
+def rescale(data)
+    maxval = max(data)
+    return [el/maxval for el in data]
+
 dataset_id = dataset_filename.split("/")[-1].split("_")[0]
 diagnostic_image_path = storage_location+"/public/images/"+dataset_id+"/"
 try:
@@ -41,6 +46,9 @@ messenger.send_update(dataset_id, {"status": "loading_dataset"})
 parsed_dataset, manifest = parse_dataset.parse(dataset_filename, manifest_filename)
 x = parsed_dataset[0]
 y = parsed_dataset[1]
+if len(set(y)) == 2 and sorted(set(y)) != [0,1]:
+    y = rescale(y)
+
 ensemble_model_count = 10
 conversion_pipeline = parsed_dataset[2]
 messenger.send_update(dataset_id, {"status": "dataset_read", "dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id})
