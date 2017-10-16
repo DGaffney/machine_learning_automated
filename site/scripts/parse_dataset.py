@@ -59,7 +59,7 @@ def read_json(filename):
 
 def read_csv(filename):
     rows = []
-    with open(filename, 'rb') as f:
+    with open(filename) as f:
         reader = csv.reader(f)
         for row in reader:
             rows.append(row)
