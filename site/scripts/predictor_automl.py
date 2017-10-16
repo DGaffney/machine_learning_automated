@@ -41,3 +41,10 @@ try:
     os.mkdir(diagnostic_image_path)
 except: 
     pass
+
+messenger.send_update(dataset_id, {"status": "loading_dataset"})
+parsed_dataset, manifest = parse_dataset.parse(dataset_filename, manifest_filename)
+x = parsed_dataset[0]
+y = parsed_dataset[1]
+if len(set(y)) == 2 and sorted(set(y)) != [0,1]:
+    y = rescale(y)
