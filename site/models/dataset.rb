@@ -90,21 +90,21 @@ class Dataset
 
   def model_success_word
     begin
-      if self.results["diagnostic_results"]["r2"] > 0.8
+      if self.results["diagnostic_results"]["r2"] && self.results["diagnostic_results"]["r2"] > 0.8
         return "Extreme Accuracy"
-      elsif self.results["diagnostic_results"]["r2"] > 0.6
+      elsif self.results["diagnostic_results"]["r2"] && self.results["diagnostic_results"]["r2"] > 0.6
         return "High Accuracy"
-      elsif self.results["diagnostic_results"]["r2"] > 0.4
+      elsif self.results["diagnostic_results"]["r2"] && self.results["diagnostic_results"]["r2"] > 0.4
         return "Mild Accuracy"
-      elsif self.results["diagnostic_results"]["r2"] > 0.2
+      elsif self.results["diagnostic_results"]["r2"] && self.results["diagnostic_results"]["r2"] > 0.2
         return "Weak Accuracy"
-      elsif self.results["diagnostic_results"]["accuracy"] > 0.8# && self.results["diagnostic_results"]["auc"] > 0.8
+      elsif self.results["diagnostic_results"]["accuracy"] && self.results["diagnostic_results"]["accuracy"] > 0.8# && self.results["diagnostic_results"]["auc"] > 0.8
         return "Extreme Accuracy"
-      elsif self.results["diagnostic_results"]["accuracy"] > 0.6# && self.results["diagnostic_results"]["auc"] > 0.5
+      elsif self.results["diagnostic_results"]["accuracy"] && self.results["diagnostic_results"]["accuracy"] > 0.6# && self.results["diagnostic_results"]["auc"] > 0.5
         return "High Accuracy"
-      elsif self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
+      elsif self.results["diagnostic_results"]["accuracy"] && self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
         return "Mild Accuracy"
-      elsif self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
+      elsif self.results["diagnostic_results"]["accuracy"] && self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
         return "Weak Accuracy"
       end
     rescue
