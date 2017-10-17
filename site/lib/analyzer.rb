@@ -62,6 +62,30 @@ module Analyzer
           end
         end
       end
+      puts "python scripts/predictor_automl.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}"
+      binding.pry
+      IO.popen("python scripts/predictor_automl.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}") do |io|
+        io.each_line do |line|
+          puts line
+          current_statement = JSON.parse(line.strip) rescue nil
+          if !current_statement.nil? && current_statement["error"] != true
+            statements << current_statement
+            if current_statement["model_found"] == "true"
+              @dataset.reload
+              @dataset.clear_updater
+              @dataset.write_final_result(current_statement)
+              @dataset.last_analyzed_at = Time.now
+              @dataset.save!
+            end
+            puts statements.length
+            @dataset.reload
+            #@dataset.latest_update = current_statement if current_statement["status"] != "complete"
+            @dataset.save!
+          else
+            DatasetError.write_new_error_dataset(@dataset, current_statement, "predictor_main.py")
+          end
+        end
+      end
     end
     if current_statement.nil?
       AnalyzeDataset.perform_async(dataset_id)
