@@ -22,11 +22,15 @@ from sklearn.ensemble import VotingClassifier
 import time
 import timeout_decorator
 import traceback
+from tpot import TPOTClassifier
+from tpot import TPOTRegressor
+from sklearn.model_selection import train_test_split
+
 storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small.csv"
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
 stated_input_column = sys.argv[3]
-run_speed = sys.argv[4]
+prev_acc = float(sys.argv[4])
 run_multiplier = 0.5
 if run_speed == "2":
     run_multiplier = 1.0
@@ -56,34 +60,25 @@ if label_type == "Ordinal":
     models = model_info.fast_ordinal_models()
     score_type = "r2"
 
-
-import sklearn.model_selection
-import sklearn.datasets
-import sklearn.metrics
-
-import autosklearn.classification
-import autosklearn.regression
-X_train, X_test, y_train, y_test = sklearn.model_selection.train_test_split(x[0:10000], y[0:10000], random_state=1)
-if label_type == "Ordinal":
-    automl = autosklearn.regression.AutoSklearnRegressor(
-    time_left_for_this_task=120, per_run_time_limit=30,
-    tmp_folder='tmp/autoslearn_regression_example_tmp',
-    output_folder='tmp/autosklearn_regression_example_out')
-    automl.fit(X_train, y_train, dataset_name=dataset_id,
-    feat_type=feature_types)
+tpot = None
+if label_type == "Ordinal"
+    tpot = TPOTRegressor(generations=5, population_size=20, verbosity=2, max_eval_time_mins=40, scoring='r2')
 else:
-    automl = autosklearn.classification.AutoSklearnClassifier(
-    time_left_for_this_task=10, per_run_time_limit=30,
-    tmp_folder='/tmp/autoslearn_cv_example_tmp',
-    output_folder='/tmp/autosklearn_cv_example_out',
-    delete_tmp_folder_after_terminate=False,
-    resampling_strategy='cv',
-    resampling_strategy_arguments={'folds': 5})
+    tpot = TPOTClassifier(generations=5, population_size=20, verbosity=2, max_eval_time_mins=40)
 
-automl.fit(X_train.copy(), y_train.copy(), dataset_name=dataset_id)
-automl.refit(X_train.copy(), y_train.copy())
+@timeout_decorator.timeout(2400)
+def train_tpot_model(x,y, tpot):
+    X_train, X_test, y_train, y_test = train_test_split(x[0:10000], y[0:10000], train_size=0.8, test_size=0.2)
+    tpot.fit(np.array(X_train), np.array(y_train))
+    return tpot
 
-    print(automl.show_models())
+train_tpot_model(x,y, tpot)
+current_best_model = [None, prev_acc]
+if tpot.fitted_pipeline_ != None:
+    model = tpot.fitted_pipeline_
+    scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+    if current_best_model[1] < np.mean(scores):
+        current_best_model = [model, np.mean(scores)]
 
-    predictions = automl.predict(X_test)
-    print("Accuracy score", sklearn.metrics.accuracy_score(y_test, predictions))
+
+diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
