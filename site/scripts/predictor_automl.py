@@ -68,11 +68,21 @@ def train_tpot_model(x,y, tpot):
     tpot.fit(np.array(X_train), np.array(y_train))
     return tpot
 
-train_tpot_model(x,y, tpot)
-current_best_model = [None, prev_acc]
-if tpot.fitted_pipeline_ != None:
-    model = tpot.fitted_pipeline_
-    scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
-    if current_best_model[1] < np.mean(scores):
-        current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+error = None
+try:
+    train_tpot_model(x,y, tpot)
+    current_best_model = [None, prev_acc]
+    if tpot.fitted_pipeline_ != None:
+        model = tpot.fitted_pipeline_
+        scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
+        if current_best_model[1] < np.mean(scores):
+            current_best_model = [model, np.mean(scores)]
+            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+except:
+    error = sys.exc_info()
+    message = None
+    if "message" in dir(error[1]):
+        message = error[1].message
+    else:
+        message = error[1].__str__()
+    print(json.dumps({"error": True, "error_type": str(error[0]), "message": message, "traceback": traceback.format_tb(error[2])}))

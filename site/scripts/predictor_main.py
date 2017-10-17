@@ -125,4 +125,6 @@ except:
     message = None
     if "message" in dir(error[1]):
         message = error[1].message
-    print(json.dumps({"error": True, "error_type": str(error[0]), "message": message, "traceback": traceback.extract_tb(error[2])}))
+    else:
+        message = error[1].__str__()
+    print(json.dumps({"error": True, "error_type": str(error[0]), "message": message, "traceback": traceback.format_tb(error[2])}))
