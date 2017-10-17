@@ -88,6 +88,30 @@ class Dataset
     self.results && self.results.empty? && self.results["error"].nil? && self.results["error"] != true && self.current_status == "complete"
   end
 
+  def model_success_word
+    begin
+      if self.results["diagnostic_results"]["r2"] > 0.8
+        return "Extreme Accuracy"
+      elsif self.results["diagnostic_results"]["r2"] > 0.6
+        return "High Accuracy"
+      elsif self.results["diagnostic_results"]["r2"] > 0.4
+        return "Mild Accuracy"
+      elsif self.results["diagnostic_results"]["r2"] > 0.2
+        return "Weak Accuracy"
+      elsif self.results["diagnostic_results"]["accuracy"] > 0.8# && self.results["diagnostic_results"]["auc"] > 0.8
+        return "Extreme Accuracy"
+      elsif self.results["diagnostic_results"]["accuracy"] > 0.6# && self.results["diagnostic_results"]["auc"] > 0.5
+        return "High Accuracy"
+      elsif self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
+        return "Mild Accuracy"
+      elsif self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
+        return "Weak Accuracy"
+      end
+    rescue
+      return "Processing"
+    end
+  end
+
   def continuous_measurement_human_language
     if self.results["diagnostic_results"]["r2"] > 0.8
       return "is extremely accurate"

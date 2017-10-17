@@ -53,6 +53,7 @@
             <th>Row Count</th>
             <th>Feature Count</th>
             <th>Status</th>
+            <th>Model Performance</th>
             <th>Last Updated</th>
           </tr>
         </thead>
@@ -65,6 +66,7 @@
               <td><%= dataset.row_count %></td>
               <td><%= dataset.feature_count %></td>
               <td><%= dataset.get_current_status %></td>
+              <td><%= dataset.model_success_word %></td>
               <td><%= TimeDifference.between(dataset.get_updated_at, Time.now).humanize %></td>
             </tr>
           <% end %>
