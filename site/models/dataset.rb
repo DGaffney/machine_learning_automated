@@ -269,7 +269,7 @@ class Dataset
     f = File.open(filename, "w")
     f.write(data)
     f.close
-    predictions = JSON.parse(`python scripts/predict_data.py #{self.id} #{filename}`)
+    predictions = JSON.parse(`python3.5 scripts/predict_data.py #{self.id} #{filename}`)
     return predictions
   end
 end
