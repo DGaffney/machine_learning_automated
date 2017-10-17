@@ -63,7 +63,6 @@ module Analyzer
         end
       end
       puts "python3.5 scripts/predictor_automl.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}"
-      binding.pry
       IO.popen("python3.5 scripts/predictor_automl.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}") do |io|
         io.each_line do |line|
           puts line
