@@ -61,7 +61,7 @@ if label_type == "Ordinal":
     score_type = "r2"
 
 tpot = None
-if label_type == "Ordinal"
+if label_type == "Ordinal":
     tpot = TPOTRegressor(generations=5, population_size=20, verbosity=2, max_eval_time_mins=40, scoring='r2')
 else:
     tpot = TPOTClassifier(generations=5, population_size=20, verbosity=2, max_eval_time_mins=40)
