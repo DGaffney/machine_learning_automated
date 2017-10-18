@@ -35,7 +35,14 @@
         <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]) %>
         <li>Current Model Accuracy: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
         <% else %>
-        <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= @dataset.latest_update["best_model"][1].to_f.round(4)*100 %>%</li>
+        <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= ((@dataset.latest_update["best_model"][1].to_f*1000).to_i/10).round(2) %>%</li>
+        <% end %>
+      <% elsif !@dataset.results["diagnostic_results"].nil? %>
+        <li>Current Best Model: <%= @dataset.results["model_name"] %></li>
+        <% if ["Binary", "Categorical"].include?(@dataset.results["label_type"]) %>
+        <li>Current Model Accuracy: <%= ((@dataset.results["diagnostic_results"]["accuracy"].to_f*1000).to_i/10).round(2) %>%</li>
+        <% else %>
+        <li><a href="#" data-toggle="tooltip" title="" data-original-title="Here we are using R^2 which is percent of variation captured by model">Current Model Accuracy*</a>: <%= ((@dataset.results["diagnostic_results"]["r2"].to_f*1000).to_i/10).round(2) %>%</li>
         <% end %>
       <% end %>
       <% end %>
