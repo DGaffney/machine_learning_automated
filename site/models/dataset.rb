@@ -106,6 +106,8 @@ class Dataset
         return "Mild Accuracy"
       elsif self.results["diagnostic_results"]["accuracy"] && self.results["diagnostic_results"]["accuracy"] > 0.5# && self.results["diagnostic_results"]["auc"] > 0.5
         return "Weak Accuracy"
+      else
+        return "Processing"
       end
     rescue
       return "Processing"
