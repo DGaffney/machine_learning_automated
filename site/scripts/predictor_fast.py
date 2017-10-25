@@ -27,6 +27,7 @@ dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd419300000
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
 stated_input_column = sys.argv[3]
 run_speed = sys.argv[4]
+prev_acc = float(sys.argv[5])
 run_multiplier = 0.5
 if run_speed == "2":
     run_multiplier = 1.0
@@ -61,7 +62,7 @@ if label_type == "Ordinal":
 
 model_run_count = float(len(models)+ensemble_model_count)
 i = 1
-current_best_model = [None, -10000000.0]
+current_best_model = [None, prev_acc]
 best_performing_models = []
 
 #@timeout_decorator.timeout(120)#@timeout(120)
