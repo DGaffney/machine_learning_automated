@@ -39,9 +39,16 @@ class Dataset
     end
   end
 
-  def self.refresh_problem_dataset(dataset_id)
-    csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"problem_csv_data/"+dataset_id+".gzip")))
-    manifest = JSON.parse(File.read(SETTINGS["storage_location"]+"problem_datasets/"+dataset_id))
+  def self.refresh_problem_dataset(dataset_id, problem_dataset=true)
+    csv_data = []
+    manifest = {}
+    if problem_dataset == true
+      csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"problem_csv_data/"+dataset_id+".gzip")))
+      manifest = JSON.parse(File.read(SETTINGS["storage_location"]+"problem_datasets/"+dataset_id))
+    else
+      csv_data = CSV.parse(Zlib::Inflate.inflate(File.read(SETTINGS["storage_location"]+"csv_data/"+dataset_id+".gzip")))
+      manifest = JSON.parse(Dataset.find(dataset_id).to_json)
+    end
     tmpname = "problem_"+rand(1000000).to_s
     csv = CSV.open("tmp/#{tmpname}.csv", "w")
     csv_data.each do |row|

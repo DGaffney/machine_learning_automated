@@ -119,6 +119,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
     transposed = map(list, zip(*casted_dataset))
     detexted = []
     labels = []
+    internal_labels = []
     conversion_pipeline = {}
     for i,col in enumerate(transposed):
         if i == int(manifest['prediction_column']):
@@ -152,6 +153,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
                 for row in col:
                     counted.append(row.count(term))
                 detexted.append(counted)
+                internal_labels.append("Count of '"+str(term)+"' in "+str(manifest['headers'][i]))
         elif manifest['col_classes'][i] == "Categorical":
             unique_vals = list(set(col))
             conversion_pipeline[i] = {"unique_terms": unique_vals}
@@ -159,6 +161,7 @@ def convert_text_fields_to_data(casted_dataset, manifest):
             for val in col:
                 newcol.append(unique_vals.index(val))
             detexted.append(newcol)
+            internal_labels.append(str(manifest['headers'][i]))
         else:
             non_none = [float(c) for c in col if c != None]
             average = np.mean(non_none)
@@ -168,12 +171,16 @@ def convert_text_fields_to_data(casted_dataset, manifest):
             conversion_pipeline[i] = {"average": average, "min": minval, "max": maxval, "stdev": stdev}
             replaced = list(replaceiniter(col, lambda x: x==None, average))
             detexted.append(replaced)
+            internal_labels.append(str(manifest['headers'][i]))
             dist = maxval-minval
             if dist > 0:
                 detexted.append(((np.array(replaced)-minval)/(dist)).tolist())
+                internal_labels.append(str(manifest['headers'][i])+" rescaled")
             if stdev > 0:
                 detexted.append(((np.array(replaced)-average)/(stdev)).tolist())
+                internal_labels.append(str(manifest['headers'][i])+" standardized")
             detexted.append(np.abs(replaced))
+            internal_labels.append(str(manifest['headers'][i])+" absolute value")
     cleared_labels = []
     cleared_dataset = []
     clean_dataset = np.array(detexted).transpose().tolist()
@@ -181,4 +188,5 @@ def convert_text_fields_to_data(casted_dataset, manifest):
         if None not in clean_dataset[i] and None != label and True not in np.isnan(clean_dataset[i]).tolist() and np.nan != label:
             cleared_labels.append(label)
             cleared_dataset.append(clean_dataset[i])
+    conversion_pipeline['internal_labels'] = internal_labels
     return cleared_dataset, cleared_labels, conversion_pipeline
