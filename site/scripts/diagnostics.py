@@ -27,6 +27,7 @@ from yellowbrick.features.pca import PCADecomposition
 import json
 from scipy.special import comb
 import random
+import review_model
 
 def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagnostic_image_path, percent_complete):
     #messenger.send_update(dataset_id, {"status": "validating_model", "percent": percent_complete, "best_model": [str(current_best_model[0]), current_best_model[1]]})

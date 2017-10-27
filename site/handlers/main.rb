@@ -28,6 +28,9 @@ post "/preview" do
   if csv.nil?
     flash[:error] = "CSV could not be read. Try again please!"
     redirect "/profile"
+  elsif csv == []
+    flash[:error] = "CSV was empty. Please provide a full CSV!"
+    redirect "/profile"
   else
     validation_csv = [csv[0]]
     csv[1..-1].shuffle.first(1000).collect{|r| validation_csv << r}
