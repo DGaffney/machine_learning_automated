@@ -64,7 +64,7 @@ model_run_count = float(len(models)+ensemble_model_count)
 i = 1
 current_best_model = [None, prev_acc]
 best_performing_models = []
-
+review = False
 #@timeout_decorator.timeout(120)#@timeout(120)
 def try_model(model, current_best_model, i):
     percent = (i/model_run_count)*run_multiplier
@@ -80,7 +80,7 @@ def try_model(model, current_best_model, i):
         best_performing_models.append(model)
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, score_type, review)
     i += 1
     return current_best_model
 
@@ -98,7 +98,7 @@ def try_ensemble_model(models, current_best_model, i):
         return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, score_type, review)
     i += 1
     return current_best_model
 
@@ -121,7 +121,7 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
             for ik in range(int(run_count)):
                 models = list(diagnostics.random_combination(best_performing_models, model_count))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
-    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0)
+    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0, score_type)
 
 error = None
 try:

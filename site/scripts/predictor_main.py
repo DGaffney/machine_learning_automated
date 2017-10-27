@@ -53,7 +53,7 @@ current_best_model = [None, prev_acc]
 scores = []
 best_performing_models = []
 
-@timeout(2400)
+@timeout(3600)
 def try_model(model, current_best_model, i):
     percent = 0.5 + (i/model_run_count)*0.5
     messenger.send_update(dataset_id, {"dataset_filename": dataset_filename, "storage_location": storage_location, "manifest_filename": manifest_filename, "dataset_id": dataset_id, "label_type": label_type, "status": "running_models", "percent": percent, "model_running": str(model), "best_model": [str(current_best_model[0]), current_best_model[1]]})
@@ -76,11 +76,11 @@ def try_model(model, current_best_model, i):
             best_performing_models.append(best_model)
         if current_best_model[-1] < np.mean(scores):
             current_best_model = [best_model, np.mean(scores)]
-            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+            diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, score_type, False)
     i += 1
     return current_best_model
 
-@timeout(2400)
+@timeout(3600)
 def try_ensemble_model(models, current_best_model, i):
     percent = 0.5 + (i/model_run_count)*0.5
     try:
@@ -96,7 +96,7 @@ def try_ensemble_model(models, current_best_model, i):
             return current_best_model
     if current_best_model[-1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, score_type, False)
     i += 1
     return current_best_model
     
@@ -119,7 +119,7 @@ try:
             for ik in range(int(run_count)):
                 models = list(diagnostics.random_combination(best_performing_models, int(model_count)))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
-    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0)
+    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0, score_type)
 except:
     error = sys.exc_info()
     message = None

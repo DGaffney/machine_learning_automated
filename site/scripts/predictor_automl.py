@@ -20,7 +20,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
 #from timeout import timeout
 import time
-import timeout_decorator
+from timeout import timeout
 import traceback
 from tpot import TPOTClassifier
 from tpot import TPOTRegressor
@@ -63,7 +63,7 @@ if label_type == "Ordinal":
 else:
     tpot = TPOTClassifier(generations=5, population_size=20, verbosity=2, max_eval_time_mins=40)
 
-@timeout_decorator.timeout(2400)
+@timeout(7200)
 def train_tpot_model(x,y, tpot):
     X_train, X_test, y_train, y_test = train_test_split(x[0:10000], y[0:10000], train_size=0.8, test_size=0.2)
     tpot.fit(np.array(X_train), np.array(y_train))
@@ -87,4 +87,4 @@ if tpot.fitted_pipeline_ != None:
     scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
     if current_best_model[1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, True)
