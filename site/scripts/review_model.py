@@ -127,10 +127,10 @@ def lin_regress_test(x, y, model, names, score_type):
         lr_coefs = [np.mean(el) for el in np.transpose([[np.mean(np.abs(el)) for el in np.transpose(coef)] for coef in lr_coefs])]
     else:
         lr_coefs = [np.mean(np.abs(el)) for el in np.transpose(lr_coefs)]
-    maxval = max(scores)
-    minval = min(scores)
+    maxval = max(lr_coefs)
+    minval = min(lr_coefs)
     dist = maxval-minval
-    return list(zip((np.array(scores)-minval)/dist, names))
+    return list(zip((np.array(lr_coefs)-minval)/dist, names))
 
 def ridge_test(x, y, model, names, score_type):
     ridge_coefs = []
