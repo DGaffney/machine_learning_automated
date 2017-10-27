@@ -173,7 +173,7 @@ def mean_decrease_accuracy(x, y, model, names, score_type):
         X_train, X_test = X[train_idx], X[test_idx]
         Y_train, Y_test = Y[train_idx], Y[test_idx]
         r = model.fit(X_train, Y_train)
-        acc = r2_score(Y_test, rf.predict(X_test))
+        acc = r2_score(Y_test, model.predict(X_test))
         for i in range(X.shape[1]):
             X_t = X_test.copy()
             np.random.shuffle(X_t[:, i])
