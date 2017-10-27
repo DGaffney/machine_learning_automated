@@ -1,7 +1,7 @@
 dataset_filename = "../tmp/59f372ecdb8009537e000017_1509126903_2010-02-22.csv__-_Count_Pct.csv"
 manifest_filename = "../tmp/59f372ecdb8009537e000017_1509126903_2010-02-22__-_Count_Pct_manifest.json"
 stated_input_column = "Float"
-prev_acc = "0.96"
+prev_acc = -100000000000
 run_speed = "0"
 import os
 import json
@@ -126,10 +126,11 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
             for ik in range(int(run_count)):
                 models = list(diagnostics.random_combination(best_performing_models, model_count))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
+    return current_best_model
 
 error = None
 try:
-    run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
+    current_best_model = run(models, current_best_model, best_performing_models, i, x, y, label_type, score_type, dataset_filename, manifest_filename, storage_location, conversion_pipeline, diagnostic_image_path)
     diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, run_multiplier*1.0, score_type, True)
 except:
     error = sys.exc_info()

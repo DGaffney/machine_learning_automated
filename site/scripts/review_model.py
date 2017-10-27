@@ -75,6 +75,8 @@ def stability_test(x, y, model, names, score_type):
     else:
         rlasso = RandomizedLasso(alpha=0.025)
         rlasso.fit(x, y)
+    if sum(rlasso.scores_) == 0:
+        return [[0, el] for el in names]
     maxval = max(rlasso.scores_)
     minval = min(rlasso.scores_)
     dist = maxval-minval
