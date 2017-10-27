@@ -119,7 +119,7 @@ try:
             for ik in range(int(run_count)):
                 models = list(diagnostics.random_combination(best_performing_models, int(model_count)))
                 current_best_model = try_ensemble_model(models, current_best_model, i)
-    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0, score_type)
+    diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 1.0, score_type, True)
 except:
     error = sys.exc_info()
     message = None
