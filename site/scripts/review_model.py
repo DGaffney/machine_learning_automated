@@ -39,12 +39,12 @@ def run_func(method, x, y, model, names, score_type):
     
 def run_all(x, y, model, names, score_type):
     sets = []
-    #sets.append(["univariate_test", run_func(univariate_test, x, y, model, names, score_type)])
+    sets.append(["univariate_test", run_func(univariate_test, x, y, model, names, score_type)])
     #sets.append(["mean_decrease_accuracy", run_func(mean_decrease_accuracy, x, y, model, names, score_type)])
-    #sets.append(["stability_test", run_func(stability_test, x, y, model, names, score_type)])
+    sets.append(["stability_test", run_func(stability_test, x, y, model, names, score_type)])
     #sets.append(["recursive_feature_elimination_test", run_func(recursive_feature_elimination_test, x, y, model, names, score_type)])
     #sets.append(["recursive_feature_elimination_cross_validation_test", run_func(recursive_feature_elimination_cross_validation_test, x, y, model, names, score_type)])
-    #sets.append(["regularization_test", run_func(regularization_test, x, y, model, names, score_type)])
+    sets.append(["regularization_test", run_func(regularization_test, x, y, model, names, score_type)])
     sets.append(["lin_regress_test", run_func(lin_regress_test, x, y, model, names, score_type)])
     sets.append(["ridge_test", run_func(ridge_test, x, y, model, names, score_type)])
     sets.append(["random_forest_test", run_func(random_forest_test, x, y, model, names, score_type)])
