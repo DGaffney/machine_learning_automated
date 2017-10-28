@@ -69,7 +69,7 @@ model_run_count = float(len(models)+ensemble_model_count)
 i = 1
 current_best_model = [None, prev_acc]
 best_performing_models = []
-review = False
+review = True
 #@timeout_decorator.timeout(120)#@timeout(120)
 def try_model(model, current_best_model, i):
     percent = (i/model_run_count)*run_multiplier
