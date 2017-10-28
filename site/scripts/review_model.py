@@ -51,7 +51,6 @@ def run_all(x, y, model, names, score_type):
     #sets.append(["mean_decrease_accuracy", run_func(mean_decrease_accuracy, x, y, model, names, score_type)])
     metric_scores = {}
     for k in names:
-        print(k)
         metric_scores[k] = 0
         for metric, score_set in sets:
             score_names = [el[1] for el in score_set]
