@@ -48,7 +48,7 @@ def run_all(x, y, model, names, score_type):
     sets.append(["lin_regress_test", run_func(lin_regress_test, x, y, model, names, score_type)])
     sets.append(["ridge_test", run_func(ridge_test, x, y, model, names, score_type)])
     sets.append(["random_forest_test", run_func(random_forest_test, x, y, model, names, score_type)])
-    sets.append(["mean_decrease_accuracy", run_func(mean_decrease_accuracy, x, y, model, names, score_type)])
+    #sets.append(["mean_decrease_accuracy", run_func(mean_decrease_accuracy, x, y, model, names, score_type)])
     metric_scores = {}
     for k in names:
         metric_scores[k] = 0
