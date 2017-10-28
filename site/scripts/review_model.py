@@ -22,10 +22,10 @@ from sklearn.metrics import r2_score
 from collections import defaultdict
 import numpy as np
 #storage_location = parse_dataset.read_json("../settings.json")["storage_location"]
-#dataset_id = "59f1200cdb800917260003b6"
+#dataset_id = "59f4807bdb800956400000a9"
 #model = joblib.load(storage_location+"ml_models/"+dataset_id+".pkl") 
-#dataset_filename = "../tmp/problem_705393.csv"
-#manifest_filename = "../tmp/problem_705393.json"
+#dataset_filename = "../tmp/59f4807bdb800956400000a9_1509195908_imports-85.data.csv"
+#manifest_filename = "../tmp/59f4807bdb800956400000a9_1509195908_imports-85.data_manifest.json"
 #stated_input_column = "Float"
 #parsed_dataset, manifest = parse_dataset.parse(dataset_filename, manifest_filename)
 #x = parsed_dataset[0]
@@ -51,10 +51,12 @@ def run_all(x, y, model, names, score_type):
     #sets.append(["mean_decrease_accuracy", run_func(mean_decrease_accuracy, x, y, model, names, score_type)])
     metric_scores = {}
     for k in names:
+        print(k)
         metric_scores[k] = 0
         for metric, score_set in sets:
             score_names = [el[1] for el in score_set]
-            metric_scores[k] += score_set[score_names.index(k)][0]/len(sets)
+            if k in score_names:
+                metric_scores[k] += score_set[score_names.index(k)][0]/len(sets)
     return {'details': sets, 'metric_scores': metric_scores}
 
 def univariate_test(x, y, model, names, score_type):
