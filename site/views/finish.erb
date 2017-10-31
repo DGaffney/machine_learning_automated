@@ -131,7 +131,11 @@
   </div>
 </div>
 <% end %>
-
+<% if !@dataset.column_support_report.nil? && !@dataset.column_support_report.empty? %>
+  <% @dataset.column_support_report.each do |k,v| %>
+    <b><%= k %>: </b><%= (v*1000).to_i/1000.0 %><br />
+  <% end %>
+<% end %>
 <script>
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()

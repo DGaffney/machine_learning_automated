@@ -15,6 +15,7 @@ class Dataset
   key :row_count, Integer
   key :feature_count, Integer
   key :csv_preview_row, Array
+  key :summarized_metric_scores, Hash
   timestamps!
   #`ls datasets`.split("\n").shuffle.collect{|x| Dataset.full_csv_test("datasets/#{x}")}
   def self.full_csv_test(filepath)
@@ -280,5 +281,31 @@ class Dataset
     f.close
     predictions = JSON.parse(`python3.5 scripts/predict_data.py #{self.id} #{filename}`)
     return predictions
+  end
+  
+  def column_support_report
+    begin
+      if self.summarized_metric_scores.nil? || self.summarized_metric_scores.empty?
+        self.summarized_metric_scores = self.summarize_metric_scores
+      end
+      return self.summarized_metric_scores
+    rescue
+      return {}
+    end
+  end
+  
+  def summarize_metric_scores
+    scores = self.results["model_review"]["metric_scores"] rescue nil
+    return {} if scores.nil?
+    header_scores = {}
+    self.headers.each do |header|
+      header_scores[header] ||= []
+      self.results["model_review"]["metric_scores"].each do |k,v|
+        if k.scan(header).first == header
+          header_scores[header] << v
+        end
+      end
+    end
+    return Hash[header_scores.reject{|k,v| v.empty?}.collect{|k,v| [k, v.average]}]
   end
 end
