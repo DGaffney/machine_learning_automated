@@ -135,7 +135,8 @@ def generate_categorical_diagnostics(x, y, current_best_model, label_type, diagn
 
 
 def store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, score_type, review=False):
-    return None if current_best_model[0] == None
+    if current_best_model[0] == None:
+        return None
     final_model = current_best_model[0]
     final_model.fit(x, y)
     if review == True:
