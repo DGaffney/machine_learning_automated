@@ -40,6 +40,9 @@ get "/datasets/:user_id/:dataset_id/export" do
   end
 end
 
+get "/models/:user_id/:dataset_ids/new_dataset" do
+  erb :"dataset_with_model"
+end
 
 get "/" do
   if current_user

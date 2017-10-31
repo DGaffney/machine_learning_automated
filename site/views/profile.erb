@@ -4,41 +4,7 @@
     </div>
 </div>
 <br />
-<div class="row">
-  <div class="col-sm-12">
-    <form action="/preview" method="POST" enctype="multipart/form-data">
-      <div class="row">
-        <div class="col-sm-3">
-          <h4>Add a New Dataset:</h4>
-        </div>
-        <div class="col-sm-6">
-          <div class="input-group">
-            <input type="file" name="file" class="file">
-            <span class="input-group-addon"><i class="fa fa-database" aria-hidden="true"></i></span>
-            <input type="text" class="form-control input-lg" disabled="" placeholder="Select Dataset">
-            <span class="input-group-btn">
-              <button class="browse btn btn-primary input-lg" type="button"><i class="glyphicon glyphicon-search"></i> Browse</button>
-            </span>
-          </div>
-        </div>
-        <div class="col-sm-3">
-        <button type="submit" class="btn btn-primary">Upload CSV</button>
-      </div>
-      </div>
-    </form>
-    <script>
-      $(document).on('click', '.browse', function(){
-        var file = $(this).parent().parent().find('.file');
-        console.log($(this).parent().parent().children())
-        file.trigger('click');
-      });
-      $(document).on('change', '.file', function(){
-        $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
-      });
-    </script>
-  </div>
-</div>
-<br />
+<%= partial "/partials/upload", {locals: {path: "/preview"}} %>
 <div class="row">
   <div class="col-sm-12">
     <% if @datasets.empty? %>
