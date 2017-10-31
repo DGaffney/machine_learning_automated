@@ -40,8 +40,16 @@ get "/datasets/:user_id/:dataset_id/export" do
   end
 end
 
-get "/models/:user_id/:dataset_ids/new_dataset" do
-  erb :"dataset_with_model"
+get "/models/:user_id/:model_id/new_dataset" do
+  redirect "/" if current_user.nil?
+  if params[:user_id] == current_user_id.to_s || current_user.email == "itsme@devingaffney.com"
+    @model = MLModel.find(params[:model_id])
+    @dataset = Dataset.find(@model.dataset_id)
+    erb :"dataset_with_model"
+  else
+    flash[:error] = "You must be logged in as a different user to see this page"
+    redirect "/"
+  end  
 end
 
 get "/" do
