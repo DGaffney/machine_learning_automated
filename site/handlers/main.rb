@@ -49,7 +49,34 @@ get "/models/:user_id/:model_id/new_dataset" do
   else
     flash[:error] = "You must be logged in as a different user to see this page"
     redirect "/"
-  end  
+  end
+end
+
+post "/preview_with_model/:model_id" do
+  redirect "/" if current_user.nil?
+  csv = CSV.parse(params["file"][:tempfile].read) rescue nil
+  params["file"][:filename] = params["file"][:filename].gsub(" ", "_")
+  if csv.nil?
+    flash[:error] = "CSV could not be read. Try again please!"
+    redirect "/profile"
+  elsif csv == []
+    flash[:error] = "CSV was empty. Please provide a full CSV!"
+    redirect "/profile"
+  else
+    validation_csv = [csv[0]]
+    csv[1..-1].shuffle.first(1000).collect{|r| validation_csv << r}
+    @csv = CSVValidator.new(validation_csv, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
+    results = @csv.validate
+    if results.class == String
+      flash[:error] = results
+      redirect "/profile"
+    else
+      @csv.csv_data = csv
+      @d = Dataset.add_new_validated_csv(@csv, current_user_id)
+      @csv_data = @d.csv_data
+      erb :"preview"
+    end
+  end
 end
 
 get "/" do
