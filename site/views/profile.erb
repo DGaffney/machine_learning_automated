@@ -82,7 +82,29 @@
     <div class="col-sm-12">
       <h1><%= current_user.first_name %>'s exported models</h1>
     </div>
-    
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Dataset of Origin</th>
+          <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+    <% current_user.ml_models.each_with_index do |model, i| %>
+      <tr>
+        <th scope="row"><%= i+1 %></th>
+        <td><%= model.name %></td>
+        <td><a href="/datasets/<%= current_user.id %>/<%= model.dataset_id %>">view original dataset</a></td>
+        <td><a href="/models/<%= current_user.id %>/<%= model.dataset_id %>/new_dataset">Apply to new dataset</a></td>
+      </tr>
+    <% end %>
+    </table>
+  </div>
 </div>
 <br />
 <% end %>

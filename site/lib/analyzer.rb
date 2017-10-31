@@ -2,12 +2,13 @@ module Analyzer
   attr_accessor :current_statement
   def perform(dataset_id, dataset_model="Dataset")
     begin
-      filename, manfest_filename = prep_dataset_for_analysis
+      filename, manfest_filename = prep_dataset_for_analysis(dataset_id, dataset_model)
       run_python_file("scripts/predictor_fast.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{@dataset.prediction_speed} #{(@dataset.results["best_model"][1] rescue -100000000)}")
       if @dataset.prediction_speed == 0
         run_python_file("scripts/predictor_main.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}")
         run_python_file("scripts/predictor_automl.py #{filename} #{filename.gsub(".csv", "")+"_manifest.json"} #{@dataset.col_classes[@dataset.prediction_column]} #{(@dataset.results["best_model"][1] rescue -100000000)}")
       end
+      cleanup(filename, manifest_filename)
     rescue => e
       binding.pry
       gg = 1
@@ -37,7 +38,7 @@ module Analyzer
     end
   end
   
-  def prep_dataset_for_analysis
+  def prep_dataset_for_analysis(dataset_id, dataset_model)
     @dataset = dataset_model.constantize.find(dataset_id)
     return nil if @dataset.nil?
     @dataset.current_status = "analyzing"
@@ -65,7 +66,12 @@ module Analyzer
       @dataset.current_status = "complete"
       @dataset.save!
     end
-    @dataset.wind_down(true) if @dataset.tipped_over?
+    if @dataset.tipped_over?
+      @dataset.wind_down(true)
+    else
+      user = User.find(@dataset.user_id)
+      Mailer.send(user, "Model for #{@dataset.filename} complete!", "Just letting you know that we have finished analyzing your dataset - click <a href=\"http://machinelearning.devingaffney.com/datasets/#{user.id}/#{@dataset.id}\">here</a> to view the results!")
+    end
     `rm #{filename}`
     `rm #{manifest_filename}`  
   end

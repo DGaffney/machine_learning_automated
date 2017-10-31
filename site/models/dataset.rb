@@ -311,7 +311,8 @@ class Dataset
   
   def self.export(dataset_id)
     @dataset = Dataset.find(dataset_id)
-    @ml_model = MLModel.new(user_id: @dataset.user_id, dataset_id: dataset_id)
-    @ml_model.
+    name = @dataset.results["model_name"]+" model from "+@dataset.filename
+    @ml_model = MLModel.first_or_create(name: name, user_id: @dataset.user_id, dataset_id: @dataset.id, internal_name: @dataset.results["model_name"], params: JSON.parse(@dataset.results["model_params"]))
+    return @ml_model
   end
 end
