@@ -93,10 +93,10 @@
       <!--TODO Figure out why AUC plots don't work in multiclass settings in yellowbrick <div class="col-sm-4">
         <a href="/images/<%= @dataset.id %>/roc_auc.png" data-toggle="tooltip" title="ROC/AUC curves show the degree to which the model outperforms chance - a good model trends towards the upper left corner"><img src="/images/<%= @dataset.id %>/roc_auc.png" class="img-fluid" alt="ROC/AUC curves show the degree to which the model outperforms chance - a good model trends towards the upper left corner"></a>
       </div> -->
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <a href="/images/<%= @dataset.id %>/classification_report.png" data-toggle="tooltip" title="This plot shows Precision/Recall/F1 Scores per category, and are useful for judging the accuracy of the model under certain constraints"><img src="/images/<%= @dataset.id %>/classification_report.png" class="img-fluid" alt="This plot shows Precision/Recall/F1 Scores per category, and are useful for judging the accuracy of the model under certain constraints"></a>
       </div>
-      <div class="col-sm-4">
+      <div class="col-sm-6">
         <a href="/images/<%= @dataset.id %>/confusion_matrix.png" data-toggle="tooltip" title="This plot shows the various success/failure cases per classification pairing."><img src="/images/<%= @dataset.id %>/confusion_matrix.png" class="img-fluid" alt="This plot shows the various success/failure cases per classification pairing."></a>
       </div>
     </div>
