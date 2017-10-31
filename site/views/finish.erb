@@ -87,7 +87,7 @@
 <% if @dataset.has_model %>
 <div class="row">
   <div class="col-sm-12">
-    <h5>Plots</h5>
+    <h5>Diagnostic Plots</h5>
     <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]||@dataset.results["presumed_label_type"]) %>
     <div class="row">
       <!--TODO Figure out why AUC plots don't work in multiclass settings in yellowbrick <div class="col-sm-4">

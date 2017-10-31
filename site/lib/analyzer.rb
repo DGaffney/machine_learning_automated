@@ -87,7 +87,7 @@ module Analyzer
           end
         end
       end
-      if current_statement.nil?
+      if current_statement.nil? && @dataset.tipped_over?
         AnalyzeDataset.perform_async(dataset_id)
       else
         @dataset.clear_updater
