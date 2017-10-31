@@ -132,9 +132,15 @@
 </div>
 <% end %>
 <% if !@dataset.column_support_report.nil? && !@dataset.column_support_report.empty? %>
-  <% @dataset.column_support_report.each do |k,v| %>
-    <b><%= k %>: </b><%= (v*1000).to_i/1000.0 %><br />
-  <% end %>
+<div class="row">
+  <div class="col-sm-12">
+    <h5>Feature Selection</h5>
+    <p>Which features are most important (sorted from most important to least important, scores are relative to each other)</p>
+    <% @dataset.column_support_report.each do |k,v| %>
+      <b><%= k %>: </b><%= (v*1000).to_i/1000.0 %><br />
+    <% end %>
+  </div>
+</div>
 <% end %>
 <script>
   $(function () {
