@@ -136,11 +136,6 @@
   <div class="col-sm-12">
     <h5>Feature Selection</h5>
     <p>Which features are most important (sorted from most important to least important, scores are relative to each other)</p>
-    <% @dataset.column_support_report.sort_by{|k,v| v}.reverse.each do |k,v| %>
-      <b><%= k %>: </b><%= (v*1000).to_i/1000.0 %><br />
-    <% end %>
-  </div>
-</div>
 <div id="featuresExtracted" style="height: 370px; width: 100%;"></div>
 <script>
 window.onload = function () {
@@ -149,7 +144,7 @@ var chart = new CanvasJS.Chart("featuresExtracted", {
 	animationEnabled: true,
 	
 	title:{
-		text:"Most Predictive Features for <%= @dataset.filename %>"
+		text:"Most Predictive Features"
 	},
 	axisX:{
 		interval: 0.1
@@ -165,8 +160,9 @@ var chart = new CanvasJS.Chart("featuresExtracted", {
 		axisYType: "secondary",
 		color: "#014D65",
 		dataPoints: [
-			
-      { y: 3, label: "Sweden" },
+    <% @dataset.column_support_report.sort_by{|k,v| v}.reverse.each do |k,v| %>
+      { y: <%= (v*1000).to_i/1000.0 %>, label: "<%= k %>" },
+    <% end %>
 		]
 	}]
 });
@@ -174,6 +170,8 @@ chart.render();
 
 }
 </script>
+  </div>
+</div>
 <% end %>
 <script>
   $(function () {
