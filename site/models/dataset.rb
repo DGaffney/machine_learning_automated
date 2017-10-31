@@ -308,4 +308,10 @@ class Dataset
     end
     return Hash[header_scores.reject{|k,v| v.empty?}.collect{|k,v| [k, v.average]}]
   end
+  
+  def self.export(dataset_id)
+    @dataset = Dataset.find(dataset_id)
+    @ml_model = MLModel.new(user_id: @dataset.user_id, dataset_id: dataset_id)
+    @ml_model.
+  end
 end

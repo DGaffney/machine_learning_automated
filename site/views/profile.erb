@@ -55,6 +55,7 @@
             <th>Status</th>
             <th>Model Performance</th>
             <th>Last Updated</th>
+            <th>Options</th>
           </tr>
         </thead>
         <tbody>
@@ -68,6 +69,7 @@
               <td><%= dataset.get_current_status %></td>
               <td><%= dataset.model_success_word %></td>
               <td><%= TimeDifference.between(dataset.get_updated_at, Time.now).humanize %></td>
+              <td><a href="/datasets/<%= current_user_id %>/<%= dataset.id %>/delete">Destroy</a> | <a href="/datasets/<%= current_user_id %>/<%= dataset.id %>/export">Export Model</a></td>
             </tr>
           <% end %>
         </tbody>
@@ -75,6 +77,15 @@
     <% end %>
   </div>
 </div>
+<% if current_user.ml_models.count > 0 %>
+<div class="row">
+    <div class="col-sm-12">
+      <h1><%= current_user.first_name %>'s exported models</h1>
+    </div>
+    
+</div>
+<br />
+<% end %>
 <script>
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()

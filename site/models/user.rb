@@ -52,4 +52,8 @@ class User
     user["dataset_count"] = Dataset.where(user_id: self.id).count
     user
   end
+  
+  def ml_models
+    MLModel.where(user_id: self.id)
+  end
 end

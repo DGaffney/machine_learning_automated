@@ -17,8 +17,36 @@ get "/datasets/:user_id/:dataset_id" do
   end
 end
 
+get "/datasets/:user_id/:dataset_id/delete" do
+  redirect "/" if current_user.nil?
+  if params[:user_id] == current_user_id.to_s || current_user.email == "itsme@devingaffney.com"
+    @dataset = Dataset.find(params[:dataset_id])
+    @dataset.wind_down
+    redirect "/profile"
+  else
+    flash[:error] = "You must be logged in as a different user to see this page"
+    redirect "/"
+  end
+end
+
+get "/datasets/:user_id/:dataset_id/export" do
+  redirect "/" if current_user.nil?
+  if params[:user_id] == current_user_id.to_s || current_user.email == "itsme@devingaffney.com"
+    @ml_model = Dataset.export(params[:dataset_id])
+    redirect "/profile"
+  else
+    flash[:error] = "You must be logged in as a different user to see this page"
+    redirect "/"
+  end
+end
+
+
 get "/" do
-  erb :"index"
+  if current_user
+    redirect "/profile"
+  else
+    erb :"index"
+  end
 end
 
 post "/preview" do
