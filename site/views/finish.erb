@@ -65,7 +65,7 @@
   <div class="col-sm-12">
     <h4>Model Results</h4>
       <h5>TL;DR</h5>
-    <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]||@dataset.results["presumed_label_type"]) %>
+    <% if ["Binary", "Categorical"].include?(@dataset.latest_update["label_type"]||@dataset.results["presumed_label_type"]) && @dataset.results["diagnostic_results"] && @dataset.results["diagnostic_results"].keys.include?("accuracy")  %>
       <p>Model presumes that predicted columns are binary (i.e. "Yes" or "No", "True" or "False") or categorical (i.e. "Spanish" or "English" or "French", "Bike" or "Car" or "Boat"). The trained model <%= @dataset.binary_measurement_human_language %>, performs at <%= @dataset.results["diagnostic_results"]["accuracy"].round(4)*100 %>% accuracy, and uses the <%= @dataset.results["model_name"] %> model, which you can read more about <a href="<%= @dataset.model_wiki_link[@dataset.results["model_name"]] %>">here</a>.</p>
     <% else %>
       <p>Model presumes that predicted columns are continuous (i.e. the height of a person in inches or the amount of money spent). The trained model <%= @dataset.continuous_measurement_human_language %>, and uses the <%= @dataset.results["model_name"] %> model, which you can read more about <a href="<%= @dataset.model_wiki_link[@dataset.results["model_name"]] %>">here</a>. On average, ≈65% of our predicted values will be within <%= @dataset.results["diagnostic_results"]["rmse"].to_f.round(2) %> of the actual value, and ≈95% fall within <%= @dataset.results["diagnostic_results"]["rmse"].to_f.round(2)*2 %> of the value.</p>

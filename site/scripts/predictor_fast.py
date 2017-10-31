@@ -32,7 +32,7 @@ dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd419300000
 manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
 stated_input_column = sys.argv[3]
 run_speed = sys.argv[4]
-prev_acc = float(sys.argv[5])
+prev_acc = -10000000000#float(sys.argv[5])
 run_multiplier = 0.5
 if run_speed == "2":
     run_multiplier = 1.0
