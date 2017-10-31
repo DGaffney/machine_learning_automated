@@ -4,7 +4,7 @@
     </div>
 </div>
 <br />
-<%= partial "/partials/upload", {locals: {path: "/preview"}} %>
+<%= partial "/partials/upload", {locals: {path: "/preview", prompt: "Add a New Dataset:"}} %>
 <div class="row">
   <div class="col-sm-12">
     <% if @datasets.empty? %>

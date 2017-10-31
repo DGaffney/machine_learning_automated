@@ -1,1 +1,13 @@
-<%= partial "/partials/upload" %>
+<div class="row">
+    <div class="col-sm-12">
+      <h1>Applying <%= @csv.filename %> to existing model</h1>
+      <p>Model Details:</p>
+      <ul>
+        <li><b>Name: </b><%= @model.name %></li>
+        <li><b>Algorithm: </b><%= @model.internal_name %></li>
+        <li><b>Parameters: </b><%= @model.params %></li>
+      </ul>
+    </div>
+</div>
+<br />
+<%= partial "/partials/upload", {locals: {path: "/preview_with_model", prompt: "Apply a Dataset to this Model:"}} %>

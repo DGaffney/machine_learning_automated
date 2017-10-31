@@ -87,4 +87,4 @@ if tpot.fitted_pipeline_ != None:
     scores = cross_val_score(model, x, y, cv=10, scoring=score_type)
     if current_best_model[1] < np.mean(scores):
         current_best_model = [model, np.mean(scores)]
-        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, percent, True)
+        diagnostics.store_model(current_best_model, x, y, dataset_id, label_type, dataset_filename, storage_location, manifest_filename, conversion_pipeline, diagnostic_image_path, 0.90, True)
