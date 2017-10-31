@@ -160,7 +160,7 @@ var chart = new CanvasJS.Chart("featuresExtracted", {
 		axisYType: "secondary",
 		color: "#014D65",
 		dataPoints: [
-    <% @dataset.column_support_report.sort_by{|k,v| v}.reverse.each do |k,v| %>
+    <% @dataset.column_support_report.sort_by{|k,v| v}.each do |k,v| %>
       { y: <%= (v*1000).to_i/1000.0 %>, label: "<%= k %>" },
     <% end %>
 		]
