@@ -1,8 +1,3 @@
-dataset_filename = "../tmp/59f372ecdb8009537e000017_1509126903_2010-02-22.csv__-_Count_Pct.csv"
-manifest_filename = "../tmp/59f372ecdb8009537e000017_1509126903_2010-02-22__-_Count_Pct_manifest.json"
-stated_input_column = "Float"
-prev_acc = -100000000000
-run_speed = "0"
 import os
 import json
 import messenger
