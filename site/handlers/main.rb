@@ -93,8 +93,8 @@ post "/models/:user_id/:model_id/submit/:dataset_id" do
     flash[:error] = "The column you selected is a textual column that has completely unique values (e.g. there's only one observation with the \"#{uniq_counts.select{|k,v| v == 1}.keys.first}\" value for the target column) - please add more rows with those values or remove them from the CSV to continue. "
     redirect "/profile"
   end
-  @dataset.prediction_accuracy = params["prediction_accuracy"]
-  @dataset.prediction_speed = params["prediction_speed"]
+  @dataset.prediction_accuracy = params["prediction_accuracy"] || "0"
+  @dataset.prediction_speed = params["prediction_speed"] || "0"
   @dataset.prediction_column = params["prediction_column"]
   prediction_example = []
   @dataset.csv_data.shuffle.first.each_with_index do |el, i|
