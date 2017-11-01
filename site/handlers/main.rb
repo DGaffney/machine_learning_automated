@@ -399,7 +399,7 @@ post "/api/:user_id/new_dataset" do
       @dataset.save!
       @dataset.set_update({"status" => "queued"})
       AnalyzeDataset.perform_async(@dataset.id)
-      return @dataset;.to_json
+      return @dataset.to_json
     end
   end
 end
