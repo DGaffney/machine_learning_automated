@@ -7,6 +7,8 @@ class AnalyzeDatasetSpecificModel
     filename, manifest_filename = prep_dataset_for_analysis(dataset_id, "Dataset")
     model_filename = prep_model_for_analysis(@model)
     run_python_file("scripts/predictor_specific_model.py #{filename} #{manifest_filename} #{@dataset.col_classes[@dataset.prediction_column]} #{model_filename}")
+    cleanup(filename, manifest_filename)
+    `rm #{model_filename}`
   end
 
   def prep_model_for_analysis(model)
@@ -16,5 +18,4 @@ class AnalyzeDatasetSpecificModel
     manifest_file.close
     return filename
   end
-  
 end
