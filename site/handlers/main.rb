@@ -281,3 +281,44 @@ post "/api/:user_id/predict/:dataset_id" do
   @dataset = Dataset.find(params[:dataset_id])
   return @dataset.predict(params[:data]).to_json rescue {error: "Prediction for this dataset not yet available"}.to_json
 end
+
+get "/api/:user_id/dataset/:dataset_id/export_model" do
+  @user = User.find(params[:user_id])
+  @dataset = Dataset.find(params[:dataset_id])
+  if @user.id == @dataset.user_id || current_user.email == "itsme@devingaffney.com"
+    @ml_model = Dataset.export(params[:dataset_id])
+    return JSON.parse(@ml_model.to_json) rescue {error: "Export Error"}.to_json
+  else
+    return {error: "You must be logged in as a different user to request this resource"}.to_json
+  end
+end
+
+get "/api/:user_id/models" do
+  @user = User.find(params[:user_id])
+  if !@user.nil?
+    @ml_models = MLModel.where(user_id: params[:user_id]).to_a
+    return JSON.parse(@ml_models.to_json) rescue {error: "Couldn't get models"}.to_json
+  else
+    return {error: "You must be logged in as a different user to request this resource"}.to_json
+  end
+end
+
+get "/api/:user_id/model/:model_id" do
+  @user = User.find(params[:user_id])
+  if !@user.nil?
+    @ml_model = MLModel.find(params[:model_id]).to_a
+    return JSON.parse(@ml_model.to_json) rescue {error: "Couldn't get models"}.to_json
+  else
+    return {error: "You must be logged in as a different user to request this resource"}.to_json
+  end
+end
+
+get "/api/:user_id/model/:model_id/" do
+  @user = User.find(params[:user_id])
+  if !@user.nil?
+    @ml_model = MLModel.find(params[:model_id]).to_a
+    return JSON.parse(@ml_model.to_json) rescue {error: "Couldn't get models"}.to_json
+  else
+    return {error: "You must be logged in as a different user to request this resource"}.to_json
+  end
+end
