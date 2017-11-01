@@ -324,7 +324,6 @@ end
 
 post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
   @user = User.find(params[:user_id])
-  binding.pry
   csv_data = JSON.parse(params[:csv_data]) rescue nil;false
   params[:filename] = params[:filename].gsub(" ", "_")
   if csv_data.nil?
@@ -366,7 +365,6 @@ end
 
 post "/api/:user_id/new_dataset" do
   @user = User.find(params[:user_id])
-  binding.pry
   csv_data = JSON.parse(params[:csv_data]) rescue nil;false
   params[:filename] = params[:filename].gsub(" ", "_")
   if csv_data.nil?

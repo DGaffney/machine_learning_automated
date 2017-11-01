@@ -1,8 +1,8 @@
 import sys
-sys.argv = ["", "tmp/59f92673db80095895000065_1509541884_2010-02-22.csv__-_Log_Count.csv",
-"tmp/59f92673db80095895000065_1509541884_2010-02-22__-_Log_Count_manifest.json" ,
+sys.argv = ["", "tmp/59fa2454db800913ef000002_1509566028_2014-09-23.csv_-_Log_Count.csv",
+"tmp/59fa2454db800913ef000002_1509566028_2014-09-23_-_Log_Count_manifest.json" ,
 "Float" ,
-"tmp/59f8fe4cdb80093a83000051_1509542560_.json"]
+"tmp/59f8fe4cdb80093a83000051_1509566029_.json"]
 import os
 import json
 import messenger
@@ -14,7 +14,7 @@ import json
 from sklearn.model_selection import cross_val_score
 import numpy as np
 
-storage_location = parse_dataset.read_json("settings.json")["storage_location"]
+storage_location = parse_dataset.read_json("../settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1]
 manifest_filename = storage_location+sys.argv[2]
 stated_input_column = sys.argv[3]
