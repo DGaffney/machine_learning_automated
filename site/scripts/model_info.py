@@ -31,7 +31,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import NuSVC
-
+from sklearn.ensemble import VotingClassifier
 def fast_models():
     return [AdaBoostClassifier(learning_rate= 0.5, n_estimators=10),
     AdaBoostClassifier(n_estimators=10),
@@ -161,42 +161,16 @@ def models():
     'RandomForestClassifier': RandomForestClassifier,
     'GradientBoostingClassifier': GradientBoostingClassifier,
     'GradientBoostingRegressor': GradientBoostingRegressor,
-    'DecisionTreeClassifier': tree.DecisionTreeClassifier,
-    'DecisionTreeRegressor': tree.DecisionTreeRegressor,
+    'DecisionTreeClassifier': DecisionTreeClassifier,
+    'DecisionTreeRegressor': DecisionTreeRegressor,
     'KNeighborsClassifier': KNeighborsClassifier,
     'AdaBoostClassifier': AdaBoostClassifier,
     'Perceptron': Perceptron,
     'NuSVC': NuSVC,
-    'MLPClassifier': MLPClassifier}
-
-def models():
-    return {'LinearRegression': LinearRegression,
-    'Ridge': Ridge,
-    'RidgeCV': RidgeCV,
-    'Lasso': Lasso,
-    'LassoLars': LassoLars,
-    'BayesianRidge': BayesianRidge,
-    'ElasticNet': ElasticNet,
-    'Perceptron': Perceptron,
-    'LogisticRegression': LogisticRegression,
-    'LinearSVC': LinearSVC,
-    'SVC': SVC,
-    'SVR': SVR,
-    'SGDClassifier': SGDClassifier,
-    'NearestNeighbors': NearestNeighbors,
-    'NearestCentroid': NearestCentroid,
-    'GaussianProcessRegressor': GaussianProcessRegressor,
-    'GaussianNB': GaussianNB,
-    'RandomForestClassifier': RandomForestClassifier,
-    'GradientBoostingClassifier': GradientBoostingClassifier,
-    'GradientBoostingRegressor': GradientBoostingRegressor,
-    'DecisionTreeClassifier': tree.DecisionTreeClassifier,
-    'DecisionTreeRegressor': tree.DecisionTreeRegressor,
-    'KNeighborsClassifier': KNeighborsClassifier,
-    'AdaBoostClassifier': AdaBoostClassifier,
-    'Perceptron': Perceptron,
-    'NuSVC': NuSVC,
-    'MLPClassifier': MLPClassifier}
+    'MLPClassifier': MLPClassifier,
+    'VotingClassifier': VotingClassifier,
+    'TPOTClassifier': TPOTClassifier,
+    'TPOTRegressor': TPOTRegressor}
 
 def hyperparameters():
     return {'KNeighborsClassifier': {'n_neighbors': [1, 2, 5, 11], 'algorithm': ['auto', 'ball_tree', 'kd_tree', 'brute'], 'leaf_size': [10, 20, 30, 40, 50]},
