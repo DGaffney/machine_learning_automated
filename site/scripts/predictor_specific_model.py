@@ -14,7 +14,7 @@ import json
 from sklearn.model_selection import cross_val_score
 import numpy as np
 
-storage_location = parse_dataset.read_json("../settings.json")["storage_location"]
+storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1]
 manifest_filename = storage_location+sys.argv[2]
 stated_input_column = sys.argv[3]
