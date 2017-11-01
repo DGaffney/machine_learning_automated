@@ -295,6 +295,7 @@ end
 
 get "/api/:user_id/models" do
   @user = User.find(params[:user_id])
+  binding.pry
   if !@user.nil?
     @ml_models = MLModel.where(user_id: params[:user_id]).to_a
     return JSON.parse(@ml_models.to_json) rescue {error: "Couldn't get models"}.to_json
