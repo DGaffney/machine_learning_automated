@@ -74,7 +74,8 @@ post "/preview_with_model/:model_id" do
       @csv.csv_data = csv
       @d = Dataset.add_new_validated_csv(@csv, current_user_id)
       @csv_data = @d.csv_data
-      erb :"preview"
+      @model = MLModel.find(params[:model_id])
+      erb :"preview_with_model"
     end
   end
 end
