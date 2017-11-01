@@ -282,7 +282,6 @@ post "/api/:user_id/predict/:dataset_id" do
 end
 
 get "/api/:user_id/dataset/:dataset_id/export_model" do
-binding.pry
   @user = User.find(params[:user_id])
   @dataset = Dataset.find(params[:dataset_id])
   if @user.id == @dataset.user_id || current_user.email == "itsme@devingaffney.com"
