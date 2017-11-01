@@ -333,5 +333,5 @@ post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
   end
 end
 
-post "/api/:user_id/new_dataset" do
-end
+#post "/api/:user_id/new_dataset" do
+#end
