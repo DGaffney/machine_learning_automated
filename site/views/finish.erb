@@ -78,8 +78,8 @@
     <pre><code class="ruby">
       require 'dgaff_ml' #gem install "dgaff_ml" in order to use
       dataset_id = "<%= @dataset.id%>"
-      model = DGaffML::Client.new("<%= current_user_id.to_s %>").model(dataset_id)
-      model.predict([<%= @dataset.csv_preview_row.inspect %>])
+      dataset = DGaffML::Client.new("<%= current_user_id.to_s %>").dataset(dataset_id)
+      dataset.predict([<%= @dataset.csv_preview_row.inspect %>])
     </code></pre>
   </div>
 </div>
