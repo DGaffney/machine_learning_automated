@@ -36,8 +36,8 @@ def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagn
     elif label_type == "Categorical":
         return generate_categorical_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
     elif label_type == "Ordinal":
-        print label_type
-        print "HELLO"
+        print(label_type)
+        print("HELLO")
         return generate_ordinal_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
 
 def generate_ordinal_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path):
