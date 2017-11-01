@@ -327,9 +327,9 @@ post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
   binding.pry
   csv_data = JSON.parse(params[:csv_data]) rescue nil;false
   params[:filename] = params[:filename].gsub(" ", "_")
-  if csv.nil?
+  if csv_data.nil?
     return {error: "CSV could not be read. Try again please!"}.to_json
-  elsif csv == []
+  elsif csv_data == []
     return {error: "CSV was empty. Please provide a full CSV!"}.to_json
   else
     validation_csv = [csv_data[0]];false
@@ -369,9 +369,9 @@ post "/api/:user_id/new_dataset" do
   binding.pry
   csv_data = JSON.parse(params[:csv_data]) rescue nil;false
   params[:filename] = params[:filename].gsub(" ", "_")
-  if csv.nil?
+  if csv_data.nil?
     return {error: "CSV could not be read. Try again please!"}.to_json
-  elsif csv == []
+  elsif csv_data == []
     return {error: "CSV was empty. Please provide a full CSV!"}.to_json
   else
     validation_csv = [csv_data[0]];false
