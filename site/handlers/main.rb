@@ -105,6 +105,7 @@ post "/models/:user_id/:model_id/submit/:dataset_id" do
   @dataset.save!
   @dataset.set_update({"status" => "queued"})
   @model = MLModel.find(params["model_id"])
+  binding.pry
   AnalyzeDatasetSpecificModel.perform_async(@dataset.id, @model.id)
   erb :"finish"
 end
