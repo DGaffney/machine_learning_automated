@@ -32,6 +32,9 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import NuSVC
 from sklearn.ensemble import VotingClassifier
+from tpot import TPOTClassifier
+from tpot import TPOTRegressor
+
 def fast_models():
     return [AdaBoostClassifier(learning_rate= 0.5, n_estimators=10),
     AdaBoostClassifier(n_estimators=10),
