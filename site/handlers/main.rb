@@ -167,7 +167,6 @@ post "/datasets/:user_id/:dataset_id" do
   end
   @dataset.csv_preview_row = prediction_example
   @dataset.save!
-  @dataset.save!
   @dataset.set_update({"status" => "queued"})
   AnalyzeDataset.perform_async(@dataset.id)
   erb :"finish"
@@ -326,12 +325,82 @@ end
 post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
   @user = User.find(params[:user_id])
   binding.pry
-  if !@user.nil?
-    return @dataset.to_json rescue {error: "Couldnt create dataset"}.to_json
+  csv_data = JSON.parse(params[:csv_data]) rescue nil;false
+  params[:filename] = params[:filename].gsub(" ", "_")
+  if csv.nil?
+    return {error: "CSV could not be read. Try again please!"}.to_json
+  elsif csv == []
+    return {error: "CSV was empty. Please provide a full CSV!"}.to_json
   else
-    return {error: "You must be logged in as a different user to request this resource"}.to_json
+    validation_csv = [csv_data[0]];false
+    csv_data[1..-1].shuffle.first(1000).collect{|r| validation_csv << r};false
+    @csv = CSVValidator.new(validation_csv, params[:filename], params[:filesize].to_f)
+    results = @csv.validate
+    if results.class == String
+      return {error: results}.to_json
+    else
+      @csv.csv_data = csv_data
+      @dataset = Dataset.add_new_validated_csv(@csv, params[:user_id])
+      @csv_data = @dataset.csv_data
+      uniq_counts = @dataset.csv_data.transpose[params[:prediction_column].to_i].counts
+      if uniq_counts.count == 1 || ((["Phrase", "Categorical", "Text"].include?(@dataset.col_classes[params["prediction_column"].to_i]) || uniq_counts.count == 2) && uniq_counts.values.include?(1))
+        @dataset.wind_down
+        return {error: "The column you selected is a textual column that has completely unique values (e.g. there's only one observation with the \"#{uniq_counts.select{|k,v| v == 1}.keys.first}\" value for the target column) - please add more rows with those values or remove them from the CSV to continue. "}.to_json
+      end
+      @dataset.prediction_accuracy = 0
+      @dataset.prediction_speed = 0
+      @dataset.prediction_column = params[:prediction_column].to_i
+      prediction_example = []
+      @dataset.csv_data.shuffle.first.each_with_index do |el, i|
+        prediction_example << el if i != @dataset.prediction_column
+      end
+      @dataset.csv_preview_row = prediction_example
+      @dataset.save!
+      @dataset.set_update({"status" => "queued"})
+      @model = MLModel.find(params[:model_id])
+      AnalyzeDatasetSpecificModel.perform_async(@dataset.id, @model.id)
+      return @d.to_json
+    end
   end
 end
 
-#post "/api/:user_id/new_dataset" do
-#end
+post "/api/:user_id/new_dataset" do
+  @user = User.find(params[:user_id])
+  binding.pry
+  csv_data = JSON.parse(params[:csv_data]) rescue nil;false
+  params[:filename] = params[:filename].gsub(" ", "_")
+  if csv.nil?
+    return {error: "CSV could not be read. Try again please!"}.to_json
+  elsif csv == []
+    return {error: "CSV was empty. Please provide a full CSV!"}.to_json
+  else
+    validation_csv = [csv_data[0]];false
+    csv_data[1..-1].shuffle.first(1000).collect{|r| validation_csv << r};false
+    @csv = CSVValidator.new(validation_csv, params[:filename], params[:filesize].to_f)
+    results = @csv.validate
+    if results.class == String
+      return {error: results}.to_json
+    else
+      @csv.csv_data = csv_data
+      @dataset = Dataset.add_new_validated_csv(@csv, params[:user_id])
+      @csv_data = @dataset.csv_data
+      uniq_counts = @dataset.csv_data.transpose[params[:prediction_column].to_i].counts
+      if uniq_counts.count == 1 || ((["Phrase", "Categorical", "Text"].include?(@dataset.col_classes[params["prediction_column"].to_i]) || uniq_counts.count == 2) && uniq_counts.values.include?(1))
+        @dataset.wind_down
+        return {error: "The column you selected is a textual column that has completely unique values (e.g. there's only one observation with the \"#{uniq_counts.select{|k,v| v == 1}.keys.first}\" value for the target column) - please add more rows with those values or remove them from the CSV to continue. "}.to_json
+      end
+      @dataset.prediction_accuracy = 0
+      @dataset.prediction_speed = 0
+      @dataset.prediction_column = params[:prediction_column].to_i
+      prediction_example = []
+      @dataset.csv_data.shuffle.first.each_with_index do |el, i|
+        prediction_example << el if i != @dataset.prediction_column
+      end
+      @dataset.csv_preview_row = prediction_example
+      @dataset.save!
+      @dataset.set_update({"status" => "queued"})
+      AnalyzeDataset.perform_async(@dataset.id)
+      return @d.to_json
+    end
+  end
+end

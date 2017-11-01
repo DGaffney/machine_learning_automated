@@ -12,6 +12,7 @@ import diagnostics
 import sys
 import json
 from sklearn.model_selection import cross_val_score
+import numpy as np
 
 storage_location = parse_dataset.read_json("settings.json")["storage_location"]
 dataset_filename = storage_location+sys.argv[1]

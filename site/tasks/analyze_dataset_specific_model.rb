@@ -3,7 +3,6 @@ class AnalyzeDatasetSpecificModel
   include Analyzer
   sidekiq_options queue: :worker
   def perform(dataset_id, model_id)
-    binding.pry
     @model = MLModel.find(model_id)
     filename, manifest_filename = prep_dataset_for_analysis(dataset_id, "Dataset")
     model_filename = prep_model_for_analysis(@model)

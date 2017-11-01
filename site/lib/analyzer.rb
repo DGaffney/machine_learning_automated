@@ -32,7 +32,7 @@ module Analyzer
           @dataset.reload
           @dataset.save!
         else
-          DatasetError.write_new_error_dataset(@dataset, @current_statement, "predictor_main.py")
+          DatasetError.write_new_error_dataset(@dataset, @current_statement, command.split("scripts/").first.split(" ").first)
         end
       end
     end
