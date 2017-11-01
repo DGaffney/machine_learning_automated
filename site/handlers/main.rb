@@ -306,7 +306,7 @@ end
 get "/api/:user_id/model/:model_id" do
   @user = User.find(params[:user_id])
   if !@user.nil?
-    @ml_model = MLModel.find(params[:model_id]).to_a
+    @ml_model = MLModel.find(params[:model_id])
     return @ml_model.to_json rescue {error: "Couldn't get models"}.to_json
   else
     return {error: "You must be logged in as a different user to request this resource"}.to_json
