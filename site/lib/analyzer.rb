@@ -69,7 +69,7 @@ module Analyzer
       @dataset.wind_down(true)
     else
       user = User.find(@dataset.user_id)
-      Mailer.send(user, "Model for #{@dataset.filename} complete!", "Just letting you know that we have finished analyzing your dataset - click <a href=\"http://machinelearning.devingaffney.com/datasets/#{user.id}/#{@dataset.id}\">here</a> to view the results!")
+      Mailer.send(user.email, "Model for #{@dataset.filename} complete!", "Just letting you know that we have finished analyzing your dataset - click <a href=\"http://machinelearning.devingaffney.com/datasets/#{user.id}/#{@dataset.id}\">here</a> to view the results!")
     end
     `rm #{filename}`
     `rm #{manifest_filename}`  
