@@ -322,3 +322,16 @@ get "/api/:user_id/model/:model_id/" do
     return {error: "You must be logged in as a different user to request this resource"}.to_json
   end
 end
+
+post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
+  @user = User.find(params[:user_id])
+  binding.pry
+  if !@user.nil?
+    return @dataset.to_json rescue {error: "Couldnt create dataset"}.to_json
+  else
+    return {error: "You must be logged in as a different user to request this resource"}.to_json
+  end
+end
+
+post "/api/:user_id/new_dataset" do
+end
