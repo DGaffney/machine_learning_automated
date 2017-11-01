@@ -36,8 +36,6 @@ def generate_diagnostics(x, y, current_best_model, label_type, dataset_id, diagn
     elif label_type == "Categorical":
         return generate_categorical_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
     elif label_type == "Ordinal":
-        print(label_type)
-        print("HELLO")
         return generate_ordinal_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path)
 
 def generate_ordinal_diagnostics(x, y, current_best_model, label_type, diagnostic_image_path):
@@ -65,6 +63,7 @@ def generate_ordinal_diagnostics(x, y, current_best_model, label_type, diagnosti
         plt.clf()
     visualizer = PCADecomposition(scale=True, center=False, col=y, proj_dim=2)
     visualizer.fit_transform(x,y)
+    print(diagnostic_image_path+"/pca_2.png")
     visualizer.poof(outpath=diagnostic_image_path+"/pca_2.png")
     plt.clf()
     visualizer = PCADecomposition(scale=True, center=False, col=y, proj_dim=3)
