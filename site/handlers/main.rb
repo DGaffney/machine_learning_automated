@@ -358,7 +358,7 @@ post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
       @dataset.set_update({"status" => "queued"})
       @model = MLModel.find(params[:model_id])
       AnalyzeDatasetSpecificModel.perform_async(@dataset.id, @model.id)
-      return @d.to_json
+      return @dataset.to_json
     end
   end
 end
@@ -398,7 +398,7 @@ post "/api/:user_id/new_dataset" do
       @dataset.save!
       @dataset.set_update({"status" => "queued"})
       AnalyzeDataset.perform_async(@dataset.id)
-      return @d.to_json
+      return @dataset.to_json
     end
   end
 end
