@@ -56,7 +56,6 @@ module Analyzer
   end
   
   def cleanup(filename, manifest_filename)
-    @dataset = dataset_model.constantize.find(dataset_id)
     if @dataset.tipped_over?
       AnalyzeDataset.perform_async(dataset_id)
     else

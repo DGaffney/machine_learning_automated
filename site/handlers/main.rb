@@ -339,7 +339,7 @@ post "/api/:user_id/model/:model_id/apply_to_new_dataset" do
       return {error: results}.to_json
     else
       @csv.csv_data = csv_data
-      @dataset = Dataset.add_new_validated_csv(@csv, params[:user_id])
+      @dataset = Dataset.add_new_validated_csv(@csv, BSON::ObjectId(params[:user_id]))
       @csv_data = @dataset.csv_data
       uniq_counts = @dataset.csv_data.transpose[params[:prediction_column].to_i].counts
       if uniq_counts.count == 1 || ((["Phrase", "Categorical", "Text"].include?(@dataset.col_classes[params["prediction_column"].to_i]) || uniq_counts.count == 2) && uniq_counts.values.include?(1))
@@ -380,7 +380,7 @@ post "/api/:user_id/new_dataset" do
       return {error: results}.to_json
     else
       @csv.csv_data = csv_data
-      @dataset = Dataset.add_new_validated_csv(@csv, params[:user_id])
+      @dataset = Dataset.add_new_validated_csv(@csv, BSON::ObjectId(params[:user_id]))
       @csv_data = @dataset.csv_data
       uniq_counts = @dataset.csv_data.transpose[params[:prediction_column].to_i].counts
       if uniq_counts.count == 1 || ((["Phrase", "Categorical", "Text"].include?(@dataset.col_classes[params["prediction_column"].to_i]) || uniq_counts.count == 2) && uniq_counts.values.include?(1))
