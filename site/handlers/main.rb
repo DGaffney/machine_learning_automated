@@ -404,6 +404,5 @@ post "/api/:user_id/new_dataset" do
 end
 
 post "/ping" do 
-  binding.pry
-  gg = 1
+  Ping.new(content: request.session.to_h.merge({ip: request.ip})).save
 end
