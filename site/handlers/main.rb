@@ -408,6 +408,5 @@ post "/ping" do
 end
 
 post "/store_twitter_account" do
-binding.pry
-TwitterAccount.new(content: params).save
+  TwitterAccount.new(content: params).save
 end
