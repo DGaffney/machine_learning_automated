@@ -406,3 +406,8 @@ end
 post "/ping" do 
   Ping.new(content: request.session.to_h.merge({ip: request.ip})).save
 end
+
+post "/store_twitter_account" do
+binding.pry
+TwitterAccount.new(content: params).save
+end
