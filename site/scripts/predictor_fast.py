@@ -18,13 +18,14 @@ from sklearn.model_selection import cross_val_score
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
+python scripts/predictor_fast.py   Integer 2 -100000000 
 #from timeout import timeout
 import time
 import timeout_decorator
 import traceback
-storage_location = parse_dataset.read_json("settings.json")["storage_location"]
-dataset_filename = storage_location+sys.argv[1] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small.csv"
-manifest_filename = storage_location+sys.argv[2] #"../tmp/59cd43757068cd4193000001_1506627154_mnist_small_manifest.json"
+storage_location = parse_dataset.read_json("settings.json")["storage_location"]+"/"
+dataset_filename = storage_location+sys.argv[1] #"../tmp/5b96baf5db800949ef000008_1536605080_scores.csv"
+manifest_filename = storage_location+sys.argv[2] #"../tmp/5b96baf5db800949ef000008_1536605080_scores_manifest.json"
 stated_input_column = sys.argv[3]
 run_speed = sys.argv[4]
 prev_acc = -10000000000#float(sys.argv[5])
@@ -119,8 +120,11 @@ def run(models, current_best_model, best_performing_models, i, x, y, label_type,
         for model_count, run_count in enumerate(diagnostics.get_run_counts_by_size(best_performing_models, ensemble_model_count)[0]):
             model_count += 2
             for ik in range(int(run_count)):
-                models = list(diagnostics.random_combination(best_performing_models, model_count))
-                current_best_model = try_ensemble_model(models, current_best_model, i)
+                try:
+                    models = list(diagnostics.random_combination(best_performing_models, model_count))
+                    current_best_model = try_ensemble_model(models, current_best_model, i)
+                except TypeError:
+                    gg = 1
     return current_best_model
 
 error = None
