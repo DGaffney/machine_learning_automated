@@ -16,8 +16,8 @@ module Analyzer
   end
 
   def run_python_file(command)
-    puts "python3.5 #{command}"
-    IO.popen("python3.5 #{command}") do |io|
+    puts "python #{command}"
+    IO.popen("python #{command}") do |io|
       io.each_line do |line|
         puts line
         @current_statement = JSON.parse(line.strip) rescue nil
