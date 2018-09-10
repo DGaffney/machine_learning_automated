@@ -121,7 +121,6 @@ end
 post "/preview" do
   redirect "/" if current_user.nil?
   csv = CSV.parse(params["file"][:tempfile].read) rescue nil
-  params["file"][:filename] = params["file"][:filename].gsub(" ", "_")
   if csv.nil?
     flash[:error] = "CSV could not be read. Try again please!"
     redirect "/profile"
@@ -129,6 +128,7 @@ post "/preview" do
     flash[:error] = "CSV was empty. Please provide a full CSV!"
     redirect "/profile"
   else
+    params["file"][:filename] = params["file"][:filename].gsub(" ", "_")
     validation_csv = [csv[0]]
     csv[1..-1].shuffle.first(1000).collect{|r| validation_csv << r}
     @csv = CSVValidator.new(validation_csv, params["file"][:filename], params["file"][:tempfile].size/1024.0/1024)
