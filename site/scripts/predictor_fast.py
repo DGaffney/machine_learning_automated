@@ -18,7 +18,6 @@ from sklearn.model_selection import cross_val_score
 import numpy as np
 from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import VotingClassifier
-python scripts/predictor_fast.py   Integer 2 -100000000 
 #from timeout import timeout
 import time
 import timeout_decorator
